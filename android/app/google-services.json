@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1058998344386",
+    "project_id": "n100-hotel-booking",
+    "storage_bucket": "n100-hotel-booking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058998344386:android:f879d54329074fe981795b",
+        "android_client_info": {
+          "package_name": "com.tdtu.n100_hotel_booking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1058998344386-cnnjs4cdst5pnmnltv9cj5ofpvm7q28l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFPXhVxt-MYskrxd7EvEuB8ctzl-rFJqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1058998344386-cnnjs4cdst5pnmnltv9cj5ofpvm7q28l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1058998344386-kdm3rinrcfjqvlb6k3l5p1g4p9mtb86p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tdtu.n100HotelBooking"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
