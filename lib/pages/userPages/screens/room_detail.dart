@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/models/room_model.dart';
+import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/review_room.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/room_trait.dart';
 
@@ -27,7 +27,7 @@ class RoomDetail extends StatelessWidget {
         child: Column(
           children: [
             Hero(
-              tag: room.name,
+              tag: room.idRoom,
               child: Image.network(
                 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
                 height: 250,
@@ -42,7 +42,7 @@ class RoomDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    room.name,
+                    room.idRoom,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

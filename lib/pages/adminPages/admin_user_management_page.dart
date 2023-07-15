@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/models/room_model.dart';
+import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/models/user_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/register_for_staff_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
@@ -127,7 +127,7 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const RegisterForStaff(),
+                          builder: (context) => RegisterForStaff(),
                         ),
                       );
                     },

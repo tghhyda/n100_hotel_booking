@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/models/room_model.dart';
+import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/room_detail.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/room_trait.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -30,7 +30,7 @@ class RoomItem extends StatelessWidget {
         child: Stack(
           children: [
             Hero(
-              tag: room.name,
+              tag: room.idRoom,
               child: FadeInImage(
                 placeholder: MemoryImage(kTransparentImage),
                 image: const NetworkImage(
@@ -53,7 +53,7 @@ class RoomItem extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      room.name,
+                      room.idRoom,
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       softWrap: true,

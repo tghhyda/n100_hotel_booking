@@ -14,6 +14,7 @@ class RegisterController {
       String phone,
       String address,
       String birthday,
+      String gender,
       String role) async {
     const CircularProgressIndicator();
     if (formKey.currentState!.validate()) {
@@ -21,14 +22,14 @@ class RegisterController {
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {
                 postDetailsToFireStore(
-                    context, email, imageUrl, name, phone, address, birthday, role)
+                    context, email, imageUrl, name, phone, address, birthday, gender, role)
               })
           .catchError((e) {});
     }
   }
 
   postDetailsToFireStore(BuildContext context, String email, String imageUrl,
-      String name, String phone, String address, String birthday, String role) async {
+      String name, String phone, String address, String birthday, String gender, String role) async {
     FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;
     CollectionReference ref = firebaseFireStore.collection('users');
     ref.doc(email).set({
@@ -38,6 +39,7 @@ class RegisterController {
       'phone': phone,
       'address': address,
       'birthday': birthday,
+      'gender': gender,
       'role': role
     });
     Navigator.pushReplacement(

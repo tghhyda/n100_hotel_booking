@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/models/room_model.dart';
+import 'package:n100_hotel_booking/models/room/convenient_model.dart';
+import 'package:n100_hotel_booking/models/room/review_model.dart';
+import 'package:n100_hotel_booking/models/room/room_model.dart';
+import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
 
 class AdminRoomManagementPage extends StatefulWidget {
@@ -24,9 +27,18 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
     QuerySnapshot roomSnapshot =
         await FirebaseFirestore.instance.collection('rooms').get();
     List<RoomModel> rooms = roomSnapshot.docs.map((doc) {
-      String name = doc['nameRoom'] as String;
-      String description = doc['descriptionRoom'] as String;
-      return RoomModel(name: name, description: description);
+      String idRoom = doc['idRoom'] as String;
+      TypeRoomModel typeRoom = doc['typeRoom'] as TypeRoomModel;
+      int priceRoom = doc['price'] as int;
+      int capacity = doc['capacity'] as int;
+      String statusRoom = doc['statusRoom'] as String;
+      List<ConvenientModel?>? convenients =
+          doc['convenients'] as List<ConvenientModel?>?;
+      List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
+      String description = doc['description'] as String;
+      return RoomModel(typeRoom, priceRoom, capacity, statusRoom, convenients,
+          reviews, description,
+          idRoom: idRoom);
     }).toList();
     setState(() {
       filteredRoomList = rooms;
@@ -52,9 +64,18 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
           .get()
           .then((QuerySnapshot querySnapshot) {
         List<RoomModel> filteredRooms = querySnapshot.docs.map((doc) {
-          String name = doc['name'] as String;
+          String idRoom = doc['idRoom'] as String;
+          TypeRoomModel typeRoom = doc['typeRoom'] as TypeRoomModel;
+          int priceRoom = doc['price'] as int;
+          int capacity = doc['capacity'] as int;
+          String statusRoom = doc['statusRoom'] as String;
+          List<ConvenientModel?>? convenients =
+              doc['convenients'] as List<ConvenientModel?>?;
+          List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
           String description = doc['description'] as String;
-          return RoomModel(name: name, description: description);
+          return RoomModel(typeRoom, priceRoom, capacity, statusRoom,
+              convenients, reviews, description,
+              idRoom: idRoom);
         }).toList();
         setState(() {
           filteredRoomList = filteredRooms;
@@ -66,7 +87,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
   void _deleteRoom(RoomModel room) {
     FirebaseFirestore.instance
         .collection('rooms')
-        .where('nameRoom', isEqualTo: room.name)
+        .where('idRoom', isEqualTo: room.idRoom)
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
@@ -162,7 +183,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              room.name,
+                              room.idRoom,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,

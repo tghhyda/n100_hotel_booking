@@ -24,7 +24,7 @@ class _RegisterState extends State<Register> {
 
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -37,6 +37,7 @@ class _RegisterState extends State<Register> {
   File? selectedFile;
   String role = "User";
   final List<String> items = ['Male', 'Female'];
+  String selectedGender = 'Male'; // Thêm biến selectedGender
   DateTime selectedBirthDate = DateTime.now();
 
   @override
@@ -96,14 +97,20 @@ class _RegisterState extends State<Register> {
 
                                   if (selectedFile != null) {
                                     try {
-                                      Reference ref = FirebaseStorage.instance.ref();
-                                      Reference refDirImages = ref.child('avatars');
+                                      Reference ref =
+                                          FirebaseStorage.instance.ref();
+                                      Reference refDirImages =
+                                          ref.child('avatars');
                                       Reference refImageToUpload =
-                                      refDirImages.child("${DateTime.now().millisecondsSinceEpoch}");
+                                          refDirImages.child(
+                                              "${DateTime.now().millisecondsSinceEpoch}");
 
-                                      UploadTask uploadTask = refImageToUpload.putFile(selectedFile!);
-                                      TaskSnapshot snapshot = await uploadTask.whenComplete(() {});
-                                      imageUrl = await snapshot.ref.getDownloadURL();
+                                      UploadTask uploadTask = refImageToUpload
+                                          .putFile(selectedFile!);
+                                      TaskSnapshot snapshot =
+                                          await uploadTask.whenComplete(() {});
+                                      imageUrl =
+                                          await snapshot.ref.getDownloadURL();
 
                                       print('ImageUrl: $imageUrl');
 
@@ -145,6 +152,7 @@ class _RegisterState extends State<Register> {
                               child: DropdownButtonWidget(
                                 listItem: items,
                                 labelText: "Gender",
+                                selectedValue: selectedGender,
                               ),
                             ),
                           ],
@@ -173,7 +181,8 @@ class _RegisterState extends State<Register> {
                             Flexible(
                               child: TextFormFieldWidget(
                                 controller: TextEditingController(
-                                  text: DateFormat('dd/MM/yyyy').format(selectedBirthDate),
+                                  text: DateFormat('dd/MM/yyyy')
+                                      .format(selectedBirthDate),
                                 ),
                                 hintText: 'Birth Date',
                                 readOnly: true,
@@ -258,7 +267,8 @@ class _RegisterState extends State<Register> {
                           hintText: 'Confirm password',
                           obscureText: isObscure2,
                           validator: (value) {
-                            if (confirmPasswordController.text != passwordController.text) {
+                            if (confirmPasswordController.text !=
+                                passwordController.text) {
                               return "Password did not match";
                             } else {
                               return null;
@@ -275,7 +285,8 @@ class _RegisterState extends State<Register> {
                           children: [
                             MaterialButton(
                               shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0)),
                               ),
                               elevation: 5.0,
                               height: 40,
@@ -298,7 +309,8 @@ class _RegisterState extends State<Register> {
                             ),
                             MaterialButton(
                               shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0)),
                               ),
                               elevation: 5.0,
                               height: 40,
@@ -316,6 +328,7 @@ class _RegisterState extends State<Register> {
                                   phoneController.text,
                                   addressController.text,
                                   birthdayController.text,
+                                  selectedGender,
                                   role,
                                 );
                               },

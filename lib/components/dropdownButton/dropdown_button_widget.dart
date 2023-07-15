@@ -3,18 +3,29 @@ import 'package:flutter/material.dart';
 
 class DropdownButtonWidget extends StatefulWidget {
   const DropdownButtonWidget(
-      {Key? key, required this.listItem, required this.labelText})
+      {Key? key,
+      required this.listItem,
+      required this.labelText,
+      this.selectedValue})
       : super(key: key);
 
   final List<String> listItem;
   final String labelText;
+  final String? selectedValue;
 
   @override
   State<DropdownButtonWidget> createState() => _DropdownButtonWidgetState();
 }
 
 class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
-  String? selectedValue;
+  late String selectedValue; // Thay đổi kiểu dữ liệu của selectedValue
+
+  @override
+  void initState() {
+    super.initState();
+    selectedValue = widget.selectedValue ??
+        'Male'; // Khởi tạo selectedValue từ thuộc tính widget.selectedValue
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +71,7 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
         value: selectedValue,
         onChanged: (value) {
           setState(() {
-            selectedValue = value;
+            selectedValue = value ?? 'Male';
           });
         },
         buttonStyleData: ButtonStyleData(
