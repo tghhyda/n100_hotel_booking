@@ -14,7 +14,9 @@ import 'package:scroll_date_picker/scroll_date_picker.dart';
 import 'admin_room_controller.dart';
 
 class AddRoomPage extends StatefulWidget {
-  const AddRoomPage({super.key});
+  const AddRoomPage({super.key, required this.onAddRoomCallback});
+
+  final void Function() onAddRoomCallback;
 
   @override
   _AddRoomPageState createState() => _AddRoomPageState();
@@ -38,6 +40,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Room'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -94,6 +97,9 @@ class _AddRoomPageState extends State<AddRoomPage> {
                               onPressed: () {
                                 const CircularProgressIndicator();
                                 Navigator.pop(context);
+                                setState(() {
+
+                                });
                               },
                               color: Colors.white,
                               child: const Text(
@@ -119,6 +125,8 @@ class _AddRoomPageState extends State<AddRoomPage> {
                                     _formkey,
                                     nameRoomController.text,
                                     descriptionRoomController.text);
+                                Navigator.pop(context);
+                                widget.onAddRoomCallback();
                               },
                               color: Colors.white,
                               child: const Text(

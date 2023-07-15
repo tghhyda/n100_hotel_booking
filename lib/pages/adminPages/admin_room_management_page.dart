@@ -16,6 +16,10 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
 
   List<RoomModel> filteredRoomList = [];
 
+  void refreshRoomList() {
+    fetchRoomList();
+  }
+
   void fetchRoomList() async {
     QuerySnapshot roomSnapshot =
         await FirebaseFirestore.instance.collection('rooms').get();
@@ -58,7 +62,6 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
       });
     }
   }
-
 
   void _deleteRoom(RoomModel room) {
     FirebaseFirestore.instance
@@ -109,10 +112,12 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AddRoomPage(),
+                          builder: (context) => AddRoomPage(
+                            onAddRoomCallback: refreshRoomList,
+                          ),
                         ),
                       );
                     },

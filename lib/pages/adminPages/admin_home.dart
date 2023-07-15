@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_room_management_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_user_management_page.dart';
+import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_page.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({Key? key}) : super(key: key);
@@ -25,6 +27,14 @@ class _AdminHomeState extends State<AdminHome> {
         title: Text('Admin'),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              signOutUser();
+            },
+          ),
+        ],
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -50,6 +60,21 @@ class _AdminHomeState extends State<AdminHome> {
         ],
       ),
     );
+  }
+
+  void signOutUser() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      // Đăng xuất thành công, chuyển đến trang đăng nhập
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()), // Thay thế bằng trang đăng nhập của bạn
+            (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      // Xảy ra lỗi khi đăng xuất
+      print("Lỗi đăng xuất: $e");
+    }
   }
 }
 

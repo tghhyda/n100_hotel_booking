@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_home.dart';
+import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_home.dart';
 
 class LoginPage extends StatefulWidget {
@@ -134,26 +135,53 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        MaterialButton(
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            MaterialButton(
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
                                   BorderRadius.all(Radius.circular(20.0))),
-                          elevation: 5.0,
-                          height: 40,
-                          onPressed: () {
-                            setState(() {
-                              visible = true;
-                            });
-                            signIn(
-                                emailController.text, passwordController.text);
-                          },
-                          color: Colors.white,
-                          child: const Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 20,
+                              elevation: 5.0,
+                              height: 40,
+                              onPressed: () {
+                                setState(() {
+                                  visible = true;
+                                });
+                                signIn(
+                                    emailController.text, passwordController.text);
+                              },
+                              color: Colors.white,
+                              child: const Text(
+                                "Login",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
                             ),
-                          ),
+                            MaterialButton(
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0))),
+                              elevation: 5.0,
+                              height: 40,
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Register(),
+                                  ),
+                                );
+                              },
+                              color: Colors.white,
+                              child: const Text(
+                                "Register",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 10,
