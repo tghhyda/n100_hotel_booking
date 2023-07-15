@@ -16,7 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: <Widget>[
             Container(
-              color: Colors.orangeAccent[700],
+              color: Colors.teal,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Center(
@@ -73,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                               return "Email cannot be empty";
                             }
                             if (!RegExp(
-                                "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                    "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
                                 .hasMatch(value)) {
                               return ("Please enter a valid email");
                             } else {
@@ -132,14 +131,13 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           keyboardType: TextInputType.emailAddress,
                         ),
-
                         const SizedBox(
                           height: 20,
                         ),
                         MaterialButton(
                           shape: const RoundedRectangleBorder(
                               borderRadius:
-                              BorderRadius.all(Radius.circular(20.0))),
+                                  BorderRadius.all(Radius.circular(20.0))),
                           elevation: 5.0,
                           height: 40,
                           onPressed: () {
@@ -149,15 +147,15 @@ class _LoginPageState extends State<LoginPage> {
                             signIn(
                                 emailController.text, passwordController.text);
                           },
-                          child: Text(
+                          color: Colors.white,
+                          child: const Text(
                             "Login",
                             style: TextStyle(
                               fontSize: 20,
                             ),
                           ),
-                          color: Colors.white,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Visibility(
@@ -165,10 +163,9 @@ class _LoginPageState extends State<LoginPage> {
                             maintainAnimation: true,
                             maintainState: true,
                             visible: visible,
-                            child: Container(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ))),
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                            )),
                       ],
                     ),
                   ),
@@ -181,40 +178,45 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void route() {
+  void route() async {
     User? user = FirebaseAuth.instance.currentUser;
-    var kk = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user!.uid)
-        .get()
-        .then((DocumentSnapshot documentSnapshot) {
+
+    if (user != null) {
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: user.email)
+          .get()
+          .then((querySnapshot) => querySnapshot.docs.first);
+
       if (documentSnapshot.exists) {
-        if (documentSnapshot.get('role') == "Admin") {
+        String role = documentSnapshot.get('role');
+
+        if (role == "Admin") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>  AdminHome(),
+              builder: (context) => const AdminHome(),
             ),
           );
-        }else{
+        } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>  UserHome(),
+              builder: (context) => const UserHome(),
             ),
           );
         }
       } else {
-        print('Document does not exist on the database');
+        print('Document does not exist in the database');
       }
-    });
+    }
   }
 
   void signIn(String email, String password) async {
     if (_formkey.currentState!.validate()) {
       try {
         UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );

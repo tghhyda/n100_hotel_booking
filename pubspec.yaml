@@ -40,6 +40,9 @@ dependencies:
   firebase_storage: ^11.2.4
   firebase_auth: ^4.6.3
   image_picker: ^1.0.0
+  dropdown_button2: ^2.3.4
+  scroll_date_picker: ^3.7.3
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
