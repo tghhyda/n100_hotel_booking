@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:n100_hotel_booking/pages/userPages/screens/user_home_page.dart';
 
 class UserHome extends StatefulWidget {
   const UserHome({Key? key}) : super(key: key);
@@ -8,8 +9,37 @@ class UserHome extends StatefulWidget {
 }
 
 class _UserHomeState extends State<UserHome> {
+  var _currentPageIndex = 0;
+
+  final List<Widget> _pages = const [
+    UserHomePage(),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('User'),
+      ),
+      body: _pages[_currentPageIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentPageIndex,
+        onTap: (index) {
+          setState(() {
+            _currentPageIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'User',
+          ),
+        ],
+      ),
+    );
   }
 }
