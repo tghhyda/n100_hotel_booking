@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:n100_hotel_booking/components/dropdownButton/dropdown_button_widget.dart';
 import 'package:n100_hotel_booking/components/textFormField/text_form_field_widget.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
@@ -28,7 +29,12 @@ class _AddRoomPageState extends State<AddRoomPage> {
   final TextEditingController nameRoomController = TextEditingController();
   final TextEditingController descriptionRoomController =
       TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  final TextEditingController capacityController = TextEditingController();
+
+  List<String> statusList = ['Pe'];
   TypeRoomModel? selectedTypeRoom;
+  List<ConvenientModel>? selectedConvenients;
 
   List<ConvenientModel> filteredConvenientList = [];
   List<TypeRoomModel> filteredTypeList = [];
@@ -36,7 +42,8 @@ class _AddRoomPageState extends State<AddRoomPage> {
   @override
   void initState() {
     super.initState();
-    fetchTypeRoomList(); // Gọi phương thức fetchTypeRoomList ở đây
+    fetchTypeRoomList();
+    fetchConvenientList();
     selectedTypeRoom = filteredTypeList.isNotEmpty ? filteredTypeList[0] : null;
   }
 
@@ -50,6 +57,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
     }).toList();
     setState(() {
       filteredConvenientList = convenients;
+      selectedConvenients = [];
     });
   }
 
@@ -68,7 +76,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
       });
     } catch (e) {
       // Xử lý lỗi khi truy xuất dữ liệu từ Firestore
-      print('Error fetching type room listtttttttttttttttttttttttttt: $e');
+      print('Error fetching type room list: $e');
     }
   }
 
@@ -99,7 +107,8 @@ class _AddRoomPageState extends State<AddRoomPage> {
                         TextFormFieldWidget(
                           controller: nameRoomController,
                           hintText: 'Id Room',
-                          prefixIcon: const Icon(Icons.bed),
+                          prefixIcon:
+                              const Icon(Icons.insert_drive_file_outlined),
                           displaySuffixIcon: false,
                           validator: (value) {
                             return null;
@@ -115,9 +124,8 @@ class _AddRoomPageState extends State<AddRoomPage> {
                             hint: const Row(
                               children: [
                                 Icon(
-                                  Icons.apartment,
-                                  size: 16,
-                                  color: Colors.grey,
+                                  Icons.bed,
+                                  size: 20,
                                 ),
                                 SizedBox(
                                   width: 4,
@@ -142,10 +150,13 @@ class _AddRoomPageState extends State<AddRoomPage> {
                                       child: Row(
                                         children: [
                                           const Icon(
-                                            Icons.airline_seat_individual_suite_rounded,
+                                            Icons
+                                                .airline_seat_individual_suite_rounded,
                                             size: 20,
                                           ),
-                                          const SizedBox(width: 12,),
+                                          const SizedBox(
+                                            width: 12,
+                                          ),
                                           Text(
                                             item.nameTypeRoom,
                                             style: const TextStyle(
@@ -177,9 +188,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         TextFormFieldWidget(
                           controller: descriptionRoomController,
                           hintText: 'Description Room',
@@ -193,6 +202,89 @@ class _AddRoomPageState extends State<AddRoomPage> {
                         const SizedBox(
                           height: 20,
                         ),
+                        TextFormFieldWidget(
+                            controller: priceController,
+                            hintText: "Price",
+                            prefixIcon: Icon(Icons.price_change),
+                            displaySuffixIcon: false,
+                            textInputType: TextInputType.number,
+                            validator: (value) {
+                              return null;
+                            }),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormFieldWidget(
+                            controller: capacityController,
+                            hintText: "Capacity",
+                            prefixIcon: const Icon(Icons.people_outline),
+                            displaySuffixIcon: false,
+                            textInputType: TextInputType.number,
+                            validator: (value) {
+                              return null;
+                            }),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: AppColorsExt.backgroundColor,
+                          ),
+                          child: Row(
+                            children: [
+                              FaIcon(FontAwesomeIcons.plus),
+                              const Text(
+                                ' Convenients: ',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 8,
+                                children:
+                                    filteredConvenientList.map((convenient) {
+                                  final bool isChecked =
+                                      selectedConvenients!.contains(convenient);
+                                  return InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (isChecked) {
+                                          selectedConvenients!
+                                              .remove(convenient);
+                                        } else {
+                                          selectedConvenients!.add(convenient);
+                                        }
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: isChecked
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        convenient.nameConvenient,
+                                        style: TextStyle(
+                                          color: isChecked
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -232,6 +324,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
                                     _formkey,
                                     nameRoomController.text,
                                     selectedTypeRoom!,
+                                    selectedConvenients!,
                                     descriptionRoomController.text);
                                 Navigator.pop(context);
                                 widget.onAddRoomCallback();
