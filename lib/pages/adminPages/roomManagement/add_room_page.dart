@@ -6,6 +6,7 @@ import 'package:n100_hotel_booking/components/dropdownButton/dropdown_button_wid
 import 'package:n100_hotel_booking/components/textFormField/text_form_field_widget.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/models/room/convenient_model.dart';
+import 'package:n100_hotel_booking/models/room/status_room_model.dart';
 import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 import 'admin_room_controller.dart';
 
@@ -32,19 +33,23 @@ class _AddRoomPageState extends State<AddRoomPage> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController capacityController = TextEditingController();
 
-  List<String> statusList = ['Pe'];
   TypeRoomModel? selectedTypeRoom;
   List<ConvenientModel>? selectedConvenients;
+  StatusRoomModel? selectedStatusRoom;
 
   List<ConvenientModel> filteredConvenientList = [];
   List<TypeRoomModel> filteredTypeList = [];
+  List<StatusRoomModel> filteredStatusRoomList = [];
 
   @override
   void initState() {
     super.initState();
     fetchTypeRoomList();
     fetchConvenientList();
+    fetchStatusRoomList();
     selectedTypeRoom = filteredTypeList.isNotEmpty ? filteredTypeList[0] : null;
+    selectedStatusRoom =
+        filteredStatusRoomList.isNotEmpty ? filteredStatusRoomList[1] : null;
   }
 
   void fetchConvenientList() async {
@@ -58,6 +63,19 @@ class _AddRoomPageState extends State<AddRoomPage> {
     setState(() {
       filteredConvenientList = convenients;
       selectedConvenients = [];
+    });
+  }
+
+  void fetchStatusRoomList() async {
+    QuerySnapshot convenientSnapshot =
+        await FirebaseFirestore.instance.collection('statusRooms').get();
+    List<StatusRoomModel> statusRooms = convenientSnapshot.docs.map((doc) {
+      String idStatus = doc['idStatus'] as String;
+      String description = doc['description'] as String;
+      return StatusRoomModel(idStatus, description);
+    }).toList();
+    setState(() {
+      filteredStatusRoomList = statusRooms;
     });
   }
 
@@ -86,6 +104,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Room'),
+        backgroundColor: Colors.teal,
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -226,6 +245,78 @@ class _AddRoomPageState extends State<AddRoomPage> {
                         const SizedBox(
                           height: 20,
                         ),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2<StatusRoomModel>(
+                            isExpanded: true,
+                            hint: const Row(
+                              children: [
+                                Icon(
+                                  Icons.library_add_check_outlined,
+                                  size: 20,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Status',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            items: filteredStatusRoomList
+                                .map((StatusRoomModel item) =>
+                                    DropdownMenuItem<StatusRoomModel>(
+                                      value: item,
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.library_add_check_outlined,
+                                            size: 20,
+                                          ),
+                                          const SizedBox(
+                                            width: 12,
+                                          ),
+                                          Text(
+                                            item.description,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
+                            value: selectedStatusRoom,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedStatusRoom = value;
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              padding: const EdgeInsets.only(right: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.black26,
+                                ),
+                                color: Colors.white,
+                              ),
+                              elevation: 2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
@@ -234,7 +325,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
                           ),
                           child: Row(
                             children: [
-                              FaIcon(FontAwesomeIcons.plus),
+                              const Icon(Icons.checklist_rounded),
                               const Text(
                                 ' Convenients: ',
                                 style: TextStyle(
@@ -325,7 +416,10 @@ class _AddRoomPageState extends State<AddRoomPage> {
                                     nameRoomController.text,
                                     selectedTypeRoom!,
                                     selectedConvenients!,
-                                    descriptionRoomController.text);
+                                    descriptionRoomController.text,
+                                    int.parse(priceController.text),
+                                    int.parse(capacityController.text),
+                                    selectedStatusRoom!);
                                 Navigator.pop(context);
                                 widget.onAddRoomCallback();
                               },
