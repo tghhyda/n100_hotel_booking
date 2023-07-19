@@ -1,5 +1,6 @@
 import 'package:n100_hotel_booking/models/room/convenient_model.dart';
 import 'package:n100_hotel_booking/models/room/review_model.dart';
+import 'package:n100_hotel_booking/models/room/status_room_model.dart';
 import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 
 class RoomModel {
@@ -7,7 +8,7 @@ class RoomModel {
   final TypeRoomModel typeRoom;
   final int priceRoom;
   final int capacity;
-  final String statusRoom;
+  final StatusRoomModel statusRoom;
   final List<ConvenientModel?>? convenient;
   final List<ReviewModel?>? review;
   final String description;

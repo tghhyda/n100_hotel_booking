@@ -11,4 +11,5 @@ class ReviewModel {
 
   ReviewModel(this.idReview, this.user, this.room, this.timeReview,
       this.detailReview, this.rate);
+
 }

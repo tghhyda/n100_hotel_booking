@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:n100_hotel_booking/models/room/convenient_model.dart';
 import 'package:n100_hotel_booking/models/room/review_model.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
+import 'package:n100_hotel_booking/models/room/status_room_model.dart';
 import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/room_item.dart';
 
@@ -24,7 +25,7 @@ class _UserHomePageState extends State<UserHomePage> {
       TypeRoomModel typeRoom = doc['typeRoom'] as TypeRoomModel;
       int priceRoom = doc['price'] as int;
       int capacity = doc['capacity'] as int;
-      String statusRoom = doc['statusRoom'] as String;
+      StatusRoomModel statusRoom = doc['statusRoom'] as StatusRoomModel;
       List<ConvenientModel?>? convenients =
           doc['convenients'] as List<ConvenientModel?>?;
       List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;

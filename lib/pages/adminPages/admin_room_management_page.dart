@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/models/room/convenient_model.dart';
 import 'package:n100_hotel_booking/models/room/review_model.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
+import 'package:n100_hotel_booking/models/room/status_room_model.dart';
 import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
 
@@ -28,16 +29,38 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
         await FirebaseFirestore.instance.collection('rooms').get();
     List<RoomModel> rooms = roomSnapshot.docs.map((doc) {
       String idRoom = doc['idRoom'] as String;
-      TypeRoomModel typeRoom = doc['typeRoom'] as TypeRoomModel;
+
+      Map<String, dynamic> typeRoomData =
+          doc['typeRoom'] as Map<String, dynamic>;
+      TypeRoomModel typeRoom = TypeRoomModel(
+        typeRoomData['idTypeRoom'] as String,
+        typeRoomData['nameTypeRoom'] as String,
+      );
+
       int priceRoom = doc['price'] as int;
       int capacity = doc['capacity'] as int;
-      String statusRoom = doc['statusRoom'] as String;
-      List<ConvenientModel?>? convenients =
-          doc['convenients'] as List<ConvenientModel?>?;
-      List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
-      String description = doc['description'] as String;
+
+      Map<String, dynamic> statusRoomData =
+          doc['statusRoom'] as Map<String, dynamic>;
+      StatusRoomModel statusRoom = StatusRoomModel(
+        statusRoomData['idStatus'] as String,
+        statusRoomData['description'] as String,
+      );
+
+      List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
+      List<ConvenientModel?> convenients =
+      convenientsData.map((convenientData) {
+        Map<String, dynamic> data = convenientData as Map<String, dynamic>;
+        return ConvenientModel(
+          data['idConvenient'] as String,
+          data['nameConvenient'] as String,
+        );
+      }).toList();
+
+      // List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
+      String description = doc['descriptionRoom'] as String;
       return RoomModel(typeRoom, priceRoom, capacity, statusRoom, convenients,
-          reviews, description,
+          null, description,
           idRoom: idRoom);
     }).toList();
     setState(() {
@@ -68,10 +91,20 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
           TypeRoomModel typeRoom = doc['typeRoom'] as TypeRoomModel;
           int priceRoom = doc['price'] as int;
           int capacity = doc['capacity'] as int;
-          String statusRoom = doc['statusRoom'] as String;
-          List<ConvenientModel?>? convenients =
-              doc['convenients'] as List<ConvenientModel?>?;
+          StatusRoomModel statusRoom = doc['statusRoom'] as StatusRoomModel;
+
+          List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
+          List<ConvenientModel?> convenients =
+              convenientsData.map((convenientData) {
+            Map<String, dynamic> data = convenientData as Map<String, dynamic>;
+            return ConvenientModel(
+              data['idConvenient'] as String,
+              data['nameConvenient'] as String,
+            );
+          }).toList();
+
           List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
+
           String description = doc['description'] as String;
           return RoomModel(typeRoom, priceRoom, capacity, statusRoom,
               convenients, reviews, description,
@@ -189,7 +222,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                                 fontSize: 18,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(room.description),
                           ],
                         ),
