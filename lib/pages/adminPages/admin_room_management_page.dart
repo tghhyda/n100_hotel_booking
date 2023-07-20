@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/room/convenient_model.dart';
 import 'package:n100_hotel_booking/models/room/review_model.dart';
@@ -79,21 +80,34 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
   void searchRooms(String keyword) {
     if (keyword.isEmpty) {
       setState(() {
-        filteredRoomList = [];
+        fetchRoomList();
       });
     } else {
       FirebaseFirestore.instance
           .collection('rooms')
-          .where('name', isGreaterThanOrEqualTo: keyword)
-          .where('name', isLessThan: '${keyword}z')
+          .where('idRoom', isGreaterThanOrEqualTo: keyword)
+          .where('idRoom', isLessThanOrEqualTo: keyword + '\uf8ff')
           .get()
           .then((QuerySnapshot querySnapshot) {
         List<RoomModel> filteredRooms = querySnapshot.docs.map((doc) {
           String idRoom = doc['idRoom'] as String;
-          TypeRoomModel typeRoom = doc['typeRoom'] as TypeRoomModel;
+
+          Map<String, dynamic> typeRoomData =
+              doc['typeRoom'] as Map<String, dynamic>;
+          TypeRoomModel typeRoom = TypeRoomModel(
+            typeRoomData['idTypeRoom'] as String,
+            typeRoomData['nameTypeRoom'] as String,
+          );
+
           int priceRoom = doc['price'] as int;
           int capacity = doc['capacity'] as int;
-          StatusRoomModel statusRoom = doc['statusRoom'] as StatusRoomModel;
+
+          Map<String, dynamic> statusRoomData =
+              doc['statusRoom'] as Map<String, dynamic>;
+          StatusRoomModel statusRoom = StatusRoomModel(
+            statusRoomData['idStatus'] as String,
+            statusRoomData['description'] as String,
+          );
 
           List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
           List<ConvenientModel?> convenients =
@@ -105,17 +119,20 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
             );
           }).toList();
 
-          List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
-          String description = doc['descriptionRoom'] as String;
           List<String> imageUrls =
               (doc['images'] as List<dynamic>).cast<String>();
+          // List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
+          String description = doc['descriptionRoom'] as String;
           return RoomModel(typeRoom, priceRoom, capacity, statusRoom,
-              convenients, reviews, description, imageUrls,
+              convenients, null, description, imageUrls,
               idRoom: idRoom);
         }).toList();
         setState(() {
           filteredRoomList = filteredRooms;
         });
+      }).catchError((error) {
+        // Handle any potential errors during the search
+        print("Error searching rooms: $error");
       });
     }
   }
@@ -135,117 +152,138 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                flex: 9,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: (value) {
-                      searchRooms(value);
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Search',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+    return Container(
+      color: AppColorsExt.backgroundColor,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  flex: 9,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        searchRooms(value);
+                      },
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelStyle: const TextStyle(color: Colors.white),
+                        focusColor: Colors.white,
+                        labelText: 'Search',
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddRoomPage(
-                            onAddRoomCallback: refreshRoomList,
+                Flexible(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddRoomPage(
+                              onAddRoomCallback: refreshRoomList,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(Icons.add),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredRoomList.length,
+              itemBuilder: (context, index) {
+                RoomModel room = filteredRoomList[index];
+                return Container(
+                  color: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey.withOpacity(0.2),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              room.images!.isNotEmpty
+                                  ? room.images![0] ??
+                                      AppUrlExt.defaultRoomImage
+                                  : AppUrlExt.defaultRoomImage,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(0.2),
-                      ),
-                      child: const Icon(Icons.add),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                room.idRoom,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                'Status: ${room.statusRoom.description}',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                'Price: ${room.priceRoom.toString()} VNĐ',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _deleteRoom(room);
+                          },
+                          color: Colors.white,
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-            ],
+                );
+              },
+            ),
           ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: filteredRoomList.length,
-            itemBuilder: (context, index) {
-              RoomModel room = filteredRoomList[index];
-              return Card(
-                color: Colors.white60,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        color: Colors.grey.withOpacity(0.2),
-                        // Replace with your image widget
-                        child: Image.network(
-                          room.images!.isNotEmpty
-                              ? room.images![0] ?? AppUrlExt.defaultRoomImage
-                              : AppUrlExt.defaultRoomImage,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              room.idRoom,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(room.description),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _deleteRoom(room);
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

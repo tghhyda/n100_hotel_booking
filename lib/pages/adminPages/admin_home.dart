@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_room_management_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_user_management_page.dart';
 import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_page.dart';
@@ -16,19 +17,23 @@ class _AdminHomeState extends State<AdminHome> {
 
   final List<Widget> _pages = [
     AdminHomePage(),
-    AdminRoomManagementPage(),
-    AdminUserManagementPage()
+    const AdminRoomManagementPage(),
+    const AdminUserManagementPage()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin'),
+        title: const Text(
+          'Admin',
+          style: TextStyle(color: Colors.white),
+        ),
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.teal,
+        backgroundColor: AppColorsExt.backgroundColor,
         actions: [
           IconButton(
+            color: Colors.white,
             icon: const Icon(Icons.logout),
             onPressed: () {
               signOutUser();
@@ -38,6 +43,8 @@ class _AdminHomeState extends State<AdminHome> {
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColorsExt.bottomNavigationBarColor,
+        selectedItemColor: Colors.white,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -68,8 +75,9 @@ class _AdminHomeState extends State<AdminHome> {
       // Đăng xuất thành công, chuyển đến trang đăng nhập
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()), // Thay thế bằng trang đăng nhập của bạn
-            (Route<dynamic> route) => false,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        // Thay thế bằng trang đăng nhập của bạn
+        (Route<dynamic> route) => false,
       );
     } catch (e) {
       // Xảy ra lỗi khi đăng xuất
@@ -83,7 +91,7 @@ class AdminHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Center(
+      child: const Center(
         child: Text('Home Page'),
       ),
     );

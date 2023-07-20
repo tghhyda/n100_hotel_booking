@@ -116,7 +116,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
     FirebaseFirestore.instance.collection('rooms').doc(roomId).set({
       'images': imageUrls,
     }, SetOptions(merge: true));
-    // Làm một cái gì đó với đường dẫn của ảnh, như lưu chúng vào cơ sở dữ liệu.
+    widget.onAddRoomCallback();
   }
 
   @override
@@ -342,7 +342,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            color: AppColorsExt.backgroundColor,
+                            color: Colors.white,
                           ),
                           child: Row(
                             children: [
