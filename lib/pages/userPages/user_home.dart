@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/user_home_page.dart';
+import 'package:n100_hotel_booking/pages/userPages/screens/user_setting.dart';
 
 class UserHome extends StatefulWidget {
   const UserHome({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class _UserHomeState extends State<UserHome> {
 
   final List<Widget> _pages = const [
     UserHomePage(),
+    UserSetting(),
   ];
 
   @override
