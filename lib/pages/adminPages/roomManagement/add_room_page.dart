@@ -1,8 +1,9 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:n100_hotel_booking/components/dropdownButton/dropdown_button_widget.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:n100_hotel_booking/components/textFormField/text_form_field_widget.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/models/room/convenient_model.dart';
@@ -96,6 +97,26 @@ class _AddRoomPageState extends State<AddRoomPage> {
       // Xử lý lỗi khi truy xuất dữ liệu từ Firestore
       print('Error fetching type room list: $e');
     }
+  }
+
+  List<File> selectedImages = [];
+
+  void _onSelectImages() async {
+    List<File> images = await pickMultipleImages();
+    setState(() {
+      selectedImages = images;
+    });
+  }
+
+  void _onUploadImages() async {
+    String roomId = nameRoomController
+        .text; // Sử dụng mã phòng hoặc bất kỳ định danh duy nhất nào cho các ảnh
+    List<String> imageUrls =
+        await uploadImagesToFirebase(selectedImages, roomId);
+    FirebaseFirestore.instance.collection('rooms').doc(roomId).set({
+      'images': imageUrls,
+    }, SetOptions(merge: true));
+    // Làm một cái gì đó với đường dẫn của ảnh, như lưu chúng vào cơ sở dữ liệu.
   }
 
   @override
@@ -375,6 +396,26 @@ class _AddRoomPageState extends State<AddRoomPage> {
                             ],
                           ),
                         ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        SizedBox(
+                          height: 100,
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: selectedImages.length,
+                              itemBuilder: (context, index) {
+                                File imageFile = selectedImages[index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.file(imageFile),
+                                );
+                              }),
+                        ),
+                        ElevatedButton(
+                          onPressed: _onSelectImages,
+                          child: const Text('Add Images'),
+                        ),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -409,17 +450,18 @@ class _AddRoomPageState extends State<AddRoomPage> {
                                 setState(() {
                                   showProgress = true;
                                 });
-                                // handleUploadImage(context);
+                                _onUploadImages();
                                 adminRoomController.postDetailsRoomToFireStore(
-                                    context,
-                                    _formkey,
-                                    nameRoomController.text,
-                                    selectedTypeRoom!,
-                                    selectedConvenients!,
-                                    descriptionRoomController.text,
-                                    int.parse(priceController.text),
-                                    int.parse(capacityController.text),
-                                    selectedStatusRoom!);
+                                  context,
+                                  _formkey,
+                                  nameRoomController.text,
+                                  selectedTypeRoom!,
+                                  selectedConvenients!,
+                                  descriptionRoomController.text,
+                                  int.parse(priceController.text),
+                                  int.parse(capacityController.text),
+                                  selectedStatusRoom!,
+                                );
                                 Navigator.pop(context);
                                 widget.onAddRoomCallback();
                               },
@@ -446,5 +488,34 @@ class _AddRoomPageState extends State<AddRoomPage> {
         ),
       ),
     );
+  }
+
+  Future<List<File>> pickMultipleImages() async {
+    List<XFile>? selectedFiles = await ImagePicker().pickMultiImage();
+    if (selectedFiles == null) return [];
+
+    List<File> images = [];
+    for (XFile file in selectedFiles) {
+      images.add(File(file.path));
+    }
+    return images;
+  }
+
+  Future<List<String>> uploadImagesToFirebase(
+      List<File> images, String roomId) async {
+    List<String> imageUrls = [];
+
+    for (int i = 0; i < images.length; i++) {
+      String imageName = '$roomId-image-$i.jpg'; // Đặt tên duy nhất cho mỗi ảnh
+      Reference ref =
+          FirebaseStorage.instance.ref().child('room_images').child(imageName);
+
+      await ref.putFile(images[i]);
+
+      String downloadUrl = await ref.getDownloadURL();
+      imageUrls.add(downloadUrl);
+    }
+
+    return imageUrls;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/room/convenient_model.dart';
 import 'package:n100_hotel_booking/models/room/review_model.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
@@ -49,7 +50,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
 
       List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
       List<ConvenientModel?> convenients =
-      convenientsData.map((convenientData) {
+          convenientsData.map((convenientData) {
         Map<String, dynamic> data = convenientData as Map<String, dynamic>;
         return ConvenientModel(
           data['idConvenient'] as String,
@@ -57,10 +58,11 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
         );
       }).toList();
 
+      List<String> imageUrls = (doc['images'] as List<dynamic>).cast<String>();
       // List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
       String description = doc['descriptionRoom'] as String;
       return RoomModel(typeRoom, priceRoom, capacity, statusRoom, convenients,
-          null, description,
+          null, description, imageUrls,
           idRoom: idRoom);
     }).toList();
     setState(() {
@@ -104,10 +106,11 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
           }).toList();
 
           List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
-
-          String description = doc['description'] as String;
+          String description = doc['descriptionRoom'] as String;
+          List<String> imageUrls =
+              (doc['images'] as List<dynamic>).cast<String>();
           return RoomModel(typeRoom, priceRoom, capacity, statusRoom,
-              convenients, reviews, description,
+              convenients, reviews, description, imageUrls,
               idRoom: idRoom);
         }).toList();
         setState(() {
@@ -152,7 +155,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                     },
                     decoration: InputDecoration(
                       labelText: 'Search',
-                      prefixIcon: Icon(Icons.search),
+                      prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -205,10 +208,12 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                         height: 80,
                         color: Colors.grey.withOpacity(0.2),
                         // Replace with your image widget
-                        // child: Image.network(
-                        //   'https://example.com/image.jpg',
-                        //   fit: BoxFit.cover,
-                        // ),
+                        child: Image.network(
+                          room.images!.isNotEmpty
+                              ? room.images![0] ?? AppUrlExt.defaultRoomImage
+                              : AppUrlExt.defaultRoomImage,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -231,7 +236,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                         onPressed: () {
                           _deleteRoom(room);
                         },
-                        icon: Icon(Icons.delete),
+                        icon: const Icon(Icons.delete),
                       ),
                     ],
                   ),

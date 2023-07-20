@@ -30,8 +30,9 @@ class _UserHomePageState extends State<UserHomePage> {
           doc['convenients'] as List<ConvenientModel?>?;
       List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
       String description = doc['description'] as String;
+      List<String> imageUrls = (doc['images'] as List<dynamic>).cast<String>();
       return RoomModel(typeRoom, priceRoom, capacity, statusRoom, convenients,
-          reviews, description,
+          reviews, description, imageUrls,
           idRoom: idRoom);
     }).toList();
     setState(() {
