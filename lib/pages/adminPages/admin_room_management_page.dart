@@ -8,6 +8,7 @@ import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/models/room/status_room_model.dart';
 import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
+import 'package:n100_hotel_booking/pages/adminPages/roomManagement/room_detail_page.dart';
 
 class AdminRoomManagementPage extends StatefulWidget {
   const AdminRoomManagementPage({Key? key}) : super(key: key);
@@ -60,12 +61,35 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
       }).toList();
 
       List<String> imageUrls = (doc['images'] as List<dynamic>).cast<String>();
-      // List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
+
+      List<dynamic> reviewDatas = doc['feedbacks'] as List<dynamic>;
+      List<ReviewModel?> reviews = reviewDatas.map((reviewData) {
+        Map<String, dynamic> data = reviewData as Map<String, dynamic>;
+        return ReviewModel(
+          data['idReview'] as String,
+          data['user'] as String,
+          data['room'] as String,
+          data['timeReview'] as String,
+          data['detailReview'] as String,
+          data['rate'] as int,
+        );
+      }).toList();
+
       String description = doc['descriptionRoom'] as String;
-      return RoomModel(typeRoom, priceRoom, capacity, statusRoom, convenients,
-          null, description, imageUrls,
-          idRoom: idRoom);
+      return RoomModel(
+        typeRoom,
+        priceRoom,
+        capacity,
+        statusRoom,
+        convenients,
+        reviews,
+        // Đã cập nhật ở đây để lấy dữ liệu reviews dựa vào model ReviewModel
+        description,
+        imageUrls,
+        idRoom: idRoom,
+      );
     }).toList();
+
     setState(() {
       filteredRoomList = rooms;
     });
@@ -121,10 +145,21 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
 
           List<String> imageUrls =
               (doc['images'] as List<dynamic>).cast<String>();
-          // List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
+          List<dynamic> reviewDatas = doc['feedbacks'] as List<dynamic>;
+          List<ReviewModel?> reviews = reviewDatas.map((reviewData) {
+            Map<String, dynamic> data = reviewData as Map<String, dynamic>;
+            return ReviewModel(
+              data['idReview'] as String,
+              data['user'] as String,
+              data['room'] as String,
+              data['timeReview'] as String,
+              data['detailReview'] as String,
+              data['rate'] as int,
+            );
+          }).toList();
           String description = doc['descriptionRoom'] as String;
           return RoomModel(typeRoom, priceRoom, capacity, statusRoom,
-              convenients, null, description, imageUrls,
+              convenients, reviews, description, imageUrls,
               idRoom: idRoom);
         }).toList();
         setState(() {
@@ -148,6 +183,15 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
       }
       fetchRoomList();
     });
+  }
+
+  void _navigateToRoomDetail(RoomModel room) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RoomDetailPage(room: room),
+      ),
+    );
   }
 
   @override
@@ -222,60 +266,66 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
               itemCount: filteredRoomList.length,
               itemBuilder: (context, index) {
                 RoomModel room = filteredRoomList[index];
-                return Container(
-                  color: Colors.transparent,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey.withOpacity(0.2),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              room.images!.isNotEmpty
-                                  ? room.images![0] ??
-                                      AppUrlExt.defaultRoomImage
-                                  : AppUrlExt.defaultRoomImage,
-                              fit: BoxFit.cover,
+                return InkWell(
+                  onTap: () {
+                    _navigateToRoomDetail(
+                        room); // Chuyển hướng sang trang chi tiết phòng khi nhấp vào phòng
+                  },
+                  child: Container(
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.grey.withOpacity(0.2),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                room.images!.isNotEmpty
+                                    ? room.images![0] ??
+                                        AppUrlExt.defaultRoomImage
+                                    : AppUrlExt.defaultRoomImage,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            // mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                room.idRoom,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 18,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              // mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  room.idRoom,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Status: ${room.statusRoom.description}',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              Text(
-                                'Price: ${room.priceRoom.toString()} VNĐ',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ],
+                                Text(
+                                  'Status: ${room.statusRoom.description}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                Text(
+                                  'Price: ${room.priceRoom.toString()} VNĐ',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            _deleteRoom(room);
-                          },
-                          color: Colors.white,
-                          icon: const Icon(Icons.delete),
-                        ),
-                      ],
+                          IconButton(
+                            onPressed: () {
+                              _deleteRoom(room);
+                            },
+                            color: Colors.white,
+                            icon: const Icon(Icons.delete),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

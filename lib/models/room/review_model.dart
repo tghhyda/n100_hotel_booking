@@ -3,9 +3,9 @@ import 'package:n100_hotel_booking/models/user_model.dart';
 
 class ReviewModel {
   final String idReview;
-  final UserModel user;
-  final RoomModel room;
-  final DateTime timeReview;
+  final String user;
+  final String room;
+  final String timeReview;
   final String detailReview;
   final int rate;
 
