@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/room_detail.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/room_trait.dart';
@@ -33,8 +34,8 @@ class RoomItem extends StatelessWidget {
               tag: room.idRoom,
               child: FadeInImage(
                 placeholder: MemoryImage(kTransparentImage),
-                image: const NetworkImage(
-                    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80'),
+                image: NetworkImage(room.images!.isNotEmpty ? (room.images![0] ??
+                    AppUrlExt.defaultRoomImage) : AppUrlExt.defaultRoomImage)  ,
                 fit: BoxFit.cover,
                 height: 200,
                 width: double.infinity,
@@ -64,18 +65,18 @@ class RoomItem extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const Row(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         RoomItemTrait(
                           icon: Icons.people,
-                          label: '2 người',
+                          label: '${room.capacity.toString()} person',
                           colorTrait: Colors.white,
                         ),
                         RoomItemTrait(
                           icon: Icons.attach_money,
-                          label: '1.000.000 VNĐ',
+                          label: room.priceRoom.toString(),
                           colorTrait: Colors.white,
                         ),
                       ],

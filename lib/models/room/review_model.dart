@@ -1,6 +1,3 @@
-import 'package:n100_hotel_booking/models/room/room_model.dart';
-import 'package:n100_hotel_booking/models/user_model.dart';
-
 class ReviewModel {
   final String idReview;
   final String user;

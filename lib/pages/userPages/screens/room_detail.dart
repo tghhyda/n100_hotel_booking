@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
+import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/review_room.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/room_trait.dart';
@@ -28,12 +30,34 @@ class RoomDetail extends StatelessWidget {
           children: [
             Hero(
               tag: room.idRoom,
-              child: Image.network(
-                'https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-                height: 250,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              child: room.images!.isNotEmpty
+                  ? SizedBox(
+                      height: 200, // Chiều cao của PageView ảnh
+                      child: PageView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: room.images!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  room.images![index]!,
+                                  fit: BoxFit.cover,
+                                )),
+                          );
+                        },
+                      ),
+                    )
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        AppUrlExt.defaultRoomImage,
+                        height: 250,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
             ),
             const SizedBox(height: 16),
             Padding(
@@ -50,6 +74,7 @@ class RoomDetail extends StatelessWidget {
                   ),
                   const Row(
                     children: [
+                      Text('Total Rate: '),
                       Icon(
                         Icons.star,
                         color: Color.fromARGB(255, 255, 230, 0),
@@ -78,18 +103,66 @@ class RoomDetail extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  const Row(
-                    children: [
-                      Icon(Icons.location_on_outlined, size: 16),
-                      SizedBox(width: 4),
-                      Text(
-                        'Hanoi, Vietnam',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+                  // const Row(
+                  //   children: [
+                  //     Icon(Icons.location_on_outlined, size: 16),
+                  //     SizedBox(width: 4),
+                  //     Text(
+                  //       'Hanoi, Vietnam',
+                  //       style: TextStyle(
+                  //         fontSize: 16,
+                  //         color: Colors.grey,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  const Divider(),
+                  const Text(
+                    'Price',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '${room.priceRoom.toString()} VND',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const Divider(),
+                  const Text(
+                    'Capacity',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '${room.capacity.toString()} Person',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const Divider(),
+                  const Text(
+                    'Type Room',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    room.typeRoom.nameTypeRoom,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
                   ),
                   const Divider(),
                   const Text(
@@ -116,23 +189,9 @@ class RoomDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  const RoomItemTrait(
-                    icon: Icons.wifi,
-                    label: 'Free Wifi',
-                    colorTrait: Colors.grey,
-                  ),
-                  const SizedBox(width: 10),
-                  const RoomItemTrait(
-                    icon: Icons.local_parking,
-                    label: 'Parking',
-                    colorTrait: Colors.grey,
-                  ),
-                  const SizedBox(width: 10),
-                  const RoomItemTrait(
-                    icon: Icons.smoke_free,
-                    label: 'No Smoking',
-                    colorTrait: Colors.grey,
-                  ),
+                  for (var convenience in room.convenient!)
+                    Text('- ${convenience?.nameConvenient ?? ""}',
+                        style: const TextStyle(color: Colors.black)),
                   const Divider(),
                   const Text(
                     'Review',

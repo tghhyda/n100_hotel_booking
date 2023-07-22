@@ -20,12 +20,12 @@ class _UserHomePageState extends State<UserHomePage> {
 
   void fetchRoomList() async {
     QuerySnapshot roomSnapshot =
-        await FirebaseFirestore.instance.collection('rooms').get();
+    await FirebaseFirestore.instance.collection('rooms').get();
     List<RoomModel> rooms = roomSnapshot.docs.map((doc) {
       String idRoom = doc['idRoom'] as String;
 
       Map<String, dynamic> typeRoomData =
-          doc['typeRoom'] as Map<String, dynamic>;
+      doc['typeRoom'] as Map<String, dynamic>;
       TypeRoomModel typeRoom = TypeRoomModel(
         typeRoomData['idTypeRoom'] as String,
         typeRoomData['nameTypeRoom'] as String,
@@ -35,7 +35,7 @@ class _UserHomePageState extends State<UserHomePage> {
       int capacity = doc['capacity'] as int;
 
       Map<String, dynamic> statusRoomData =
-          doc['statusRoom'] as Map<String, dynamic>;
+      doc['statusRoom'] as Map<String, dynamic>;
       StatusRoomModel statusRoom = StatusRoomModel(
         statusRoomData['idStatus'] as String,
         statusRoomData['description'] as String,
@@ -43,7 +43,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
       List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
       List<ConvenientModel?> convenients =
-          convenientsData.map((convenientData) {
+      convenientsData.map((convenientData) {
         Map<String, dynamic> data = convenientData as Map<String, dynamic>;
         return ConvenientModel(
           data['idConvenient'] as String,
@@ -52,12 +52,35 @@ class _UserHomePageState extends State<UserHomePage> {
       }).toList();
 
       List<String> imageUrls = (doc['images'] as List<dynamic>).cast<String>();
-      // List<ReviewModel?>? reviews = doc['reviews'] as List<ReviewModel?>?;
+
+      List<dynamic> reviewDatas = doc['feedbacks'] as List<dynamic>;
+      List<ReviewModel?> reviews = reviewDatas.map((reviewData) {
+        Map<String, dynamic> data = reviewData as Map<String, dynamic>;
+        return ReviewModel(
+          data['idReview'] as String,
+          data['user'] as String,
+          data['room'] as String,
+          data['timeReview'] as String,
+          data['detailReview'] as String,
+          data['rate'] as int,
+        );
+      }).toList();
+
       String description = doc['descriptionRoom'] as String;
-      return RoomModel(typeRoom, priceRoom, capacity, statusRoom, convenients,
-          null, description, imageUrls,
-          idRoom: idRoom);
+      return RoomModel(
+        typeRoom,
+        priceRoom,
+        capacity,
+        statusRoom,
+        convenients,
+        reviews,
+        // Đã cập nhật ở đây để lấy dữ liệu reviews dựa vào model ReviewModel
+        description,
+        imageUrls,
+        idRoom: idRoom,
+      );
     }).toList();
+
     setState(() {
       filteredRoomList = rooms;
     });
