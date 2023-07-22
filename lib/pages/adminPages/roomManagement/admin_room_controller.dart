@@ -48,4 +48,44 @@ class AdminRoomController {
       ref.doc(idRoom).set(roomData);
     }
   }
+
+  void updateDetailsRoomInFireStore(
+    BuildContext context,
+    String idRoom,
+    TypeRoomModel typeRoom,
+    List<ConvenientModel?> convenients,
+    String descriptionRoom,
+    int price,
+    int capacity,
+    StatusRoomModel status,
+  ) async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    CollectionReference ref = firebaseFirestore.collection('rooms');
+
+    List<Map<dynamic, dynamic>> convenientData = convenients.map((convenient) {
+      if (convenient == null) return {}; // Trường hợp convenient là null
+      return {
+        'idConvenient': convenient.idConvenient,
+        'nameConvenient': convenient.nameConvenient,
+      };
+    }).toList();
+
+    Map<String, dynamic> roomData = {
+      'idRoom': idRoom,
+      'typeRoom': {
+        'idTypeRoom': typeRoom.idTypeRoom,
+        'nameTypeRoom': typeRoom.nameTypeRoom,
+      },
+      'statusRoom': {
+        'idStatus': status.idStatus,
+        'description': status.description,
+      },
+      'price': price,
+      'capacity': capacity,
+      'convenients': convenientData,
+      'descriptionRoom': descriptionRoom,
+    };
+
+    await ref.doc(idRoom).update(roomData);
+  }
 }

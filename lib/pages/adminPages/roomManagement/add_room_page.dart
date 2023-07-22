@@ -218,7 +218,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
                             buttonStyleData: ButtonStyleData(
                               padding: const EdgeInsets.only(right: 14),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: Colors.black26,
                                 ),
@@ -325,7 +325,7 @@ class _AddRoomPageState extends State<AddRoomPage> {
                             buttonStyleData: ButtonStyleData(
                               padding: const EdgeInsets.only(right: 14),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: Colors.black26,
                                 ),
@@ -402,19 +402,33 @@ class _AddRoomPageState extends State<AddRoomPage> {
                         SizedBox(
                           height: 100,
                           child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: selectedImages.length,
-                              itemBuilder: (context, index) {
-                                File imageFile = selectedImages[index];
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Image.file(imageFile),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: selectedImages.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == selectedImages.length) {
+                                return Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(),
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: InkWell(
+                                      onTap: _onSelectImages,
+                                      child: const Text('Add Images'),
+                                    ),
+                                  ),
                                 );
-                              }),
-                        ),
-                        ElevatedButton(
-                          onPressed: _onSelectImages,
-                          child: const Text('Add Images'),
+                              }
+
+                              // Nếu index nhỏ hơn số phần tử trong danh sách, hiển thị hình ảnh từ danh sách selectedImages
+                              File imageFile = selectedImages[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image.file(imageFile),
+                              );
+                            },
+                          ),
                         ),
                         const SizedBox(height: 20),
                         Row(
@@ -464,6 +478,11 @@ class _AddRoomPageState extends State<AddRoomPage> {
                                 );
                                 Navigator.pop(context);
                                 widget.onAddRoomCallback();
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text("Add Room success"),
+                                  duration: Duration(seconds: 4),
+                                ));
                               },
                               color: Colors.white,
                               child: const Text(

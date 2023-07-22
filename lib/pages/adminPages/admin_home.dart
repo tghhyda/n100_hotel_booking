@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
+import 'package:n100_hotel_booking/pages/adminPages/admin_booking_management.dart';
+import 'package:n100_hotel_booking/pages/adminPages/admin_others_model_management.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_room_management_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_user_management_page.dart';
 import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_page.dart';
@@ -16,9 +18,12 @@ class _AdminHomeState extends State<AdminHome> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
+    const AdminOthersModelManagement(),
+    const AdminBookingManagement(),
     AdminHomePage(),
     const AdminRoomManagementPage(),
-    const AdminUserManagementPage()
+    const AdminUserManagementPage(),
+
   ];
 
   @override
@@ -27,7 +32,7 @@ class _AdminHomeState extends State<AdminHome> {
       appBar: AppBar(
         title: const Text(
           'Admin',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: AppColorsExt.textColor),
         ),
         automaticallyImplyLeading: false,
         backgroundColor: AppColorsExt.backgroundColor,
@@ -43,6 +48,7 @@ class _AdminHomeState extends State<AdminHome> {
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         backgroundColor: AppColorsExt.bottomNavigationBarColor,
         selectedItemColor: Colors.white,
         currentIndex: _currentIndex,
@@ -52,6 +58,12 @@ class _AdminHomeState extends State<AdminHome> {
           });
         },
         items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              label: 'Models'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_business_sharp),
+              label: 'Booking'),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',

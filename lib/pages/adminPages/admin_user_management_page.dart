@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/models/user_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/register_for_staff_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
+import 'package:n100_hotel_booking/pages/adminPages/userManagement/detail_user_page.dart';
 
 class AdminUserManagementPage extends StatefulWidget {
   const AdminUserManagementPage({Key? key}) : super(key: key);
@@ -45,20 +47,20 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
     fetchUserList();
   }
 
-  void searchRooms(String keyword) {
+  void searchUser(String keyword) {
     if (keyword.isEmpty) {
       setState(() {
-        filteredUserList = [];
+        fetchUserList();
       });
     } else {
       FirebaseFirestore.instance
           .collection('users')
           .where('role', isNotEqualTo: 'Admin')
-          .where('name', isGreaterThanOrEqualTo: keyword)
-          .where('name', isLessThan: '${keyword}z')
           .get()
           .then((QuerySnapshot querySnapshot) {
-        List<UserModel> filteredUsers = querySnapshot.docs.map((doc) {
+        List<UserModel> filteredUsers = querySnapshot.docs
+            .where((doc) => doc['name'].startsWith(keyword))
+            .map((doc) {
           String name = doc['name'] as String;
           String email = doc['email'] as String;
           String address = doc['address'] as String;
@@ -66,15 +68,17 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
           String birthday = doc['birthday'] as String;
           String imageUrl = doc['imageUrl'] as String;
           String role = doc['role'] as String;
-          return UserModel(
-              name, birthday, phone, imageUrl, role, email, address);
-        }).toList();
+          return UserModel(name, birthday, phone, imageUrl, role, email, address);
+        })
+            .toList();
         setState(() {
           filteredUserList = filteredUsers;
         });
       });
     }
   }
+
+
 
   void _deleteUser(UserModel userModel) {
     FirebaseFirestore.instance
@@ -88,119 +92,146 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
     });
   }
 
+  void _navigateToUserDetail(UserModel user) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserDetailPage(user: user),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                flex: 9,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: (value) {
-                      searchRooms(value);
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Search',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+    return Container(
+      padding: const EdgeInsets.all(8),
+      color: AppColorsExt.backgroundColor,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  flex: 9,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        searchUser(value);
+                      },
+                      style: const TextStyle(
+                        color: AppColorsExt.textColor,
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RegisterForStaff(),
+                      decoration: InputDecoration(
+                        labelText: 'Search',
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: AppColorsExt.textColor,
                         ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(0.2),
+                        labelStyle: const TextStyle(
+                          color: AppColorsExt.textColor,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
-                      child: const Icon(Icons.add),
                     ),
                   ),
                 ),
-              ),
-            ],
+                // Flexible(
+                //   flex: 2,
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     child: InkWell(
+                //       onTap: () {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder: (context) => RegisterForStaff(),
+                //           ),
+                //         );
+                //       },
+                //       child: Container(
+                //         padding: const EdgeInsets.all(8),
+                //         decoration: BoxDecoration(
+                //           shape: BoxShape.circle,
+                //           color: Colors.grey.withOpacity(0.2),
+                //         ),
+                //         child: const Icon(Icons.add),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: filteredUserList.length,
-            itemBuilder: (context, index) {
-              UserModel user = filteredUserList[index];
-              return Card(
-                color: Colors.white60,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey.withOpacity(0.2),
-                          // Replace with your image widget
-                          child: Image.network(
-                            user.imageUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user.nameUser,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredUserList.length,
+              itemBuilder: (context, index) {
+                UserModel user = filteredUserList[index];
+                return InkWell(
+                  onTap: () {
+                    _navigateToUserDetail(user);
+                  },
+                  child: Card(
+                    color: Colors.white60,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              color: Colors.grey.withOpacity(0.2),
+                              // Replace with your image widget
+                              child: Image.network(
+                                user.imageUrl,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(user.email),
-                            Text(user.role),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.nameUser,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(user.email),
+                                Text(user.role),
+                              ],
+                            ),
+                          ),
+                          // IconButton(
+                          //   onPressed: () {
+                          //     _deleteUser(user);
+                          //   },
+                          //   icon: const Icon(Icons.delete),
+                          // ),
+                        ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          _deleteUser(user);
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
