@@ -7,10 +7,13 @@ class BookingModel {
   final DateTime? startDate;
   final DateTime? endDate;
   final int? numberOfPeople;
-  final bool? isCheckIn;
-  final bool? isCheckOut;
-  final bool? isPayment;
+  bool? isCheckIn;
+  bool? isCheckOut;
+  bool? isPayment;
 
-  BookingModel(this.user, this.room, this.startDate, this.endDate,
-      this.numberOfPeople, this.isCheckIn, this.isCheckOut, this.isPayment);
+  BookingModel(
+      this.user, this.room, this.startDate, this.endDate, this.numberOfPeople,
+      {required bool isCheckIn,
+      required bool isCheckOut,
+      required bool isPayment});
 }

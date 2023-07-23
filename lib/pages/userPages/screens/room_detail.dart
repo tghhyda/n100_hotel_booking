@@ -1,17 +1,83 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
+import 'package:n100_hotel_booking/models/user_model.dart';
+import 'package:n100_hotel_booking/pages/generalPages/booking_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/review_room.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/room_trait.dart';
 
-class RoomDetail extends StatelessWidget {
-  const RoomDetail({
-    super.key,
-    required this.room,
-  });
-
+class RoomDetail extends StatefulWidget {
+  const RoomDetail({Key? key, required this.room}) : super(key: key);
   final RoomModel room;
+
+  @override
+  State<RoomDetail> createState() => _RoomDetailState();
+}
+
+class _RoomDetailState extends State<RoomDetail> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  User? _currentUser;
+  UserModel? _userModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+
+  void _getCurrentUser() {
+    User? user = _auth.currentUser;
+    setState(() {
+      _currentUser = user;
+    });
+
+    if (_currentUser != null) {
+      _getUserModel(_currentUser!.email!);
+    }
+  }
+
+  void _getUserModel(String email) async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        DocumentSnapshot userDocument = snapshot.docs.first;
+        _userModel = UserModel(
+          userDocument['name'],
+          userDocument['birthday'],
+          userDocument['phone'],
+          userDocument['imageUrl'],
+          userDocument['role'],
+          userDocument['email'],
+          userDocument['address'],
+        );
+        print('${_userModel!.nameUser} -----------------------------------');
+      } else {
+        print('khong co -----------------------------------');
+      }
+    } catch (e) {
+      // Handle any errors that might occur during the database query.
+      print('Error fetching user data: $e');
+    }
+  }
+
+  void _navigateToBookingPage() async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookingPage(
+          selectedRoom: widget.room,
+          currentUser: _userModel!,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +86,10 @@ class RoomDetail extends StatelessWidget {
         title: const Text('Room Detail'),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.favorite_border),
+            onPressed: () {
+              _navigateToBookingPage();
+            },
+            icon: const Icon(Icons.add_business_outlined),
           ),
         ],
       ),
@@ -29,20 +97,20 @@ class RoomDetail extends StatelessWidget {
         child: Column(
           children: [
             Hero(
-              tag: room.idRoom,
-              child: room.images!.isNotEmpty
+              tag: widget.room.idRoom,
+              child: widget.room.images!.isNotEmpty
                   ? SizedBox(
                       height: 200, // Chiều cao của PageView ảnh
                       child: PageView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: room.images!.length,
+                        itemCount: widget.room.images!.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.network(
-                                  room.images![index]!,
+                                  widget.room.images![index]!,
                                   fit: BoxFit.cover,
                                 )),
                           );
@@ -66,7 +134,7 @@ class RoomDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    room.idRoom,
+                    widget.room.idRoom,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -126,7 +194,7 @@ class RoomDetail extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '${room.priceRoom.toString()} VND',
+                    '${widget.room.priceRoom.toString()} VND',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -142,7 +210,7 @@ class RoomDetail extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '${room.capacity.toString()} Person',
+                    '${widget.room.capacity.toString()} Person',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -158,7 +226,7 @@ class RoomDetail extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    room.typeRoom.nameTypeRoom,
+                    widget.room.typeRoom.nameTypeRoom,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -174,7 +242,7 @@ class RoomDetail extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    room.description,
+                    widget.room.description,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -189,7 +257,7 @@ class RoomDetail extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  for (var convenience in room.convenient!)
+                  for (var convenience in widget.room.convenient!)
                     Text('- ${convenience?.nameConvenient ?? ""}',
                         style: const TextStyle(color: Colors.black)),
                   const Divider(),

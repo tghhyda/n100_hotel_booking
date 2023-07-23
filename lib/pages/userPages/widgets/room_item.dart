@@ -76,7 +76,7 @@ class RoomItem extends StatelessWidget {
                         ),
                         RoomItemTrait(
                           icon: Icons.attach_money,
-                          label: room.priceRoom.toString(),
+                          label: '${room.priceRoom.toString()} VND',
                           colorTrait: Colors.white,
                         ),
                       ],

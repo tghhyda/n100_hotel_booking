@@ -19,13 +19,15 @@ class _UserHomePageState extends State<UserHomePage> {
   List<RoomModel> filteredRoomList = [];
 
   void fetchRoomList() async {
-    QuerySnapshot roomSnapshot =
-    await FirebaseFirestore.instance.collection('rooms').get();
+    QuerySnapshot roomSnapshot = await FirebaseFirestore.instance
+        .collection('rooms')
+        .where('statusRoom.description', isEqualTo: 'Available')
+        .get();
     List<RoomModel> rooms = roomSnapshot.docs.map((doc) {
       String idRoom = doc['idRoom'] as String;
 
       Map<String, dynamic> typeRoomData =
-      doc['typeRoom'] as Map<String, dynamic>;
+          doc['typeRoom'] as Map<String, dynamic>;
       TypeRoomModel typeRoom = TypeRoomModel(
         typeRoomData['idTypeRoom'] as String,
         typeRoomData['nameTypeRoom'] as String,
@@ -35,7 +37,7 @@ class _UserHomePageState extends State<UserHomePage> {
       int capacity = doc['capacity'] as int;
 
       Map<String, dynamic> statusRoomData =
-      doc['statusRoom'] as Map<String, dynamic>;
+          doc['statusRoom'] as Map<String, dynamic>;
       StatusRoomModel statusRoom = StatusRoomModel(
         statusRoomData['idStatus'] as String,
         statusRoomData['description'] as String,
@@ -43,7 +45,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
       List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
       List<ConvenientModel?> convenients =
-      convenientsData.map((convenientData) {
+          convenientsData.map((convenientData) {
         Map<String, dynamic> data = convenientData as Map<String, dynamic>;
         return ConvenientModel(
           data['idConvenient'] as String,
@@ -74,7 +76,6 @@ class _UserHomePageState extends State<UserHomePage> {
         statusRoom,
         convenients,
         reviews,
-        // Đã cập nhật ở đây để lấy dữ liệu reviews dựa vào model ReviewModel
         description,
         imageUrls,
         idRoom: idRoom,
