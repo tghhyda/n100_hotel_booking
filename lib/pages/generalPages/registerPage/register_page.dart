@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:n100_hotel_booking/components/dropdownButton/dropdown_button_widget.dart';
+import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
 import 'package:n100_hotel_booking/components/textFormField/text_form_field_widget.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_page.dart';
 import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_controller.dart';
+import 'package:get/get.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -32,7 +33,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController addressController = TextEditingController();
 
   String imageUrl = '';
-  bool isObscure = true;
+  RxBool isObscure = true.obs;
   bool isObscure2 = true;
   File? selectedFile;
   String role = "User";
@@ -45,11 +46,20 @@ class _RegisterState extends State<Register> {
     final registerController = RegisterController();
     return Scaffold(
       backgroundColor: AppColorsExt.backgroundColor,
+      appBar: AppBar(
+        title: const Text("Fill Your Profile"),
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              color: AppColorsExt.primaryColor,
+            SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
@@ -61,20 +71,6 @@ class _RegisterState extends State<Register> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const SizedBox(
-                          height: 80,
-                        ),
-                        const Text(
-                          "Register Now",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 40,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
                         Stack(
                           children: [
                             buildImagePreview(),
@@ -112,8 +108,6 @@ class _RegisterState extends State<Register> {
                                       imageUrl =
                                           await snapshot.ref.getDownloadURL();
 
-                                      print('ImageUrl: $imageUrl');
-
                                       setState(() {});
                                     } catch (e) {
                                       // Handle Firebase upload error
@@ -122,7 +116,7 @@ class _RegisterState extends State<Register> {
                                 },
                                 icon: const Icon(
                                   Icons.add_a_photo,
-                                  color: Colors.black,
+                                  color: AppColorsExt.primaryColor,
                                 ),
                               ),
                             ),
@@ -240,23 +234,30 @@ class _RegisterState extends State<Register> {
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormFieldWidget(
-                          controller: passwordController,
-                          hintText: 'Password',
-                          obscureText: isObscure,
-                          validator: (value) {
-                            RegExp regex = RegExp(r'^.{6,}$');
-                            if (value!.isEmpty) {
-                              return "Password cannot be empty";
-                            }
-                            if (!regex.hasMatch(value)) {
-                              return "Please enter a valid password (min. 6 characters)";
-                            } else {
-                              return null;
-                            }
-                          },
-                          prefixIcon: const Icon(Icons.lock),
-                          onChanged: null,
+                        Obx(
+                          () => AppTextFormFieldWidget()
+                              .setController(passwordController)
+                              .setHintText('Password')
+                              .setObscureText(isObscure.value)
+                              .setOnTapSuffixIcon(() {
+                                isObscure.value = !isObscure.value;
+                              })
+                              .setValidator((value) {
+                                RegExp regex = RegExp(r'^.{6,}$');
+                                if (value!.isEmpty) {
+                                  return "Password cannot be empty";
+                                }
+                                if (!regex.hasMatch(value)) {
+                                  return "Please enter a valid password (min. 6 characters)";
+                                } else {
+                                  return null;
+                                }
+                              })
+                              .setAutoValidateMode(
+                                  AutovalidateMode.onUserInteraction)
+                              .setPrefixIcon(const Icon(Icons.lock))
+                              .setDisplaySuffixIcon(true)
+                              .build(context),
                         ),
                         const SizedBox(
                           height: 20,
@@ -279,68 +280,38 @@ class _RegisterState extends State<Register> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            MaterialButton(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20.0)),
-                              ),
-                              elevation: 5.0,
-                              height: 40,
-                              onPressed: () {
-                                const CircularProgressIndicator();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginPage(),
-                                  ),
-                                );
-                              },
-                              color: Colors.white,
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
+                        MaterialButton(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0)),
+                          ),
+                          elevation: 5.0,
+                          height: 40,
+                          onPressed: () {
+                            setState(() {
+                              showProgress = true;
+                            });
+                            registerController.signUp(
+                              context,
+                              _formKey,
+                              emailController.text,
+                              passwordController.text,
+                              imageUrl,
+                              nameController.text,
+                              phoneController.text,
+                              addressController.text,
+                              birthdayController.text,
+                              selectedGender,
+                              role,
+                            );
+                          },
+                          color: Colors.white,
+                          child: const Text(
+                            "Register",
+                            style: TextStyle(
+                              fontSize: 20,
                             ),
-                            MaterialButton(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20.0)),
-                              ),
-                              elevation: 5.0,
-                              height: 40,
-                              onPressed: () {
-                                setState(() {
-                                  showProgress = true;
-                                });
-                                registerController.signUp(
-                                  context,
-                                  _formKey,
-                                  emailController.text,
-                                  passwordController.text,
-                                  imageUrl,
-                                  nameController.text,
-                                  phoneController.text,
-                                  addressController.text,
-                                  birthdayController.text,
-                                  selectedGender,
-                                  role,
-                                );
-                              },
-                              color: Colors.white,
-                              child: const Text(
-                                "Register",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                         const SizedBox(
                           height: 20,
@@ -377,10 +348,7 @@ class _RegisterState extends State<Register> {
     if (selectedFile != null) {
       return Container(
         decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
-            width: 2,
-          ),
+          border: Border.all(),
           borderRadius: BorderRadius.circular(64),
         ),
         child: ClipRRect(
@@ -394,10 +362,12 @@ class _RegisterState extends State<Register> {
         ),
       );
     } else {
-      return const CircleAvatar(
-        radius: 64,
-        backgroundImage: NetworkImage(
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDHdhmg41bLtbVhtPvxaHhDCqzJhAewA-TrBQ4Y4k&s',
+      return const SizedBox(
+        height: 128,
+        width: 128,
+        child: CircleAvatar(
+          backgroundImage:
+              AssetImage('assets/defaultImage/user_default_avatar.png'),
         ),
       );
     }

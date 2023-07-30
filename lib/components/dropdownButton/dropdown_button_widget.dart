@@ -77,7 +77,7 @@ class _DropdownButtonWidgetState extends State<DropdownButtonWidget> {
         buttonStyleData: ButtonStyleData(
           padding: const EdgeInsets.only(right: 14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: Colors.black26,
             ),

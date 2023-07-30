@@ -166,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                               elevation: 5.0,
                               height: 40,
                               onPressed: () {
-                                Navigator.pushReplacement(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => const Register(),
