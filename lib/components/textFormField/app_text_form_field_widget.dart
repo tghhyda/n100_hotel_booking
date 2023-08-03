@@ -119,4 +119,10 @@ class AppTextFormFieldWidget extends AppTextFormFieldBaseBuilder {
     _onTapSuffixIcon = onTapSuffixIcon;
     return this;
   }
+
+  @override
+  AppTextFormFieldBaseBuilder setOnTap(void Function()? onTap) {
+    _onTap = onTap;
+    return this;
+  }
 }

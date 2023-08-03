@@ -25,6 +25,8 @@ abstract class AppTextFormFieldBaseBuilder {
 
   AppTextFormFieldBaseBuilder setHintText(String hintText);
 
+  AppTextFormFieldBaseBuilder setOnTap(void Function()? onTap);
+
   AppTextFormFieldBaseBuilder setInputType(TextInputType inputType);
 
   AppTextFormFieldBaseBuilder setOnChanged(void Function(String) onChanged);

@@ -34,11 +34,11 @@ class _RegisterState extends State<Register> {
 
   String imageUrl = '';
   RxBool isObscure = true.obs;
-  bool isObscure2 = true;
+  RxBool isObscure2 = true.obs;
   File? selectedFile;
   String role = "User";
   final List<String> items = ['Male', 'Female'];
-  String selectedGender = 'Male'; // Thêm biến selectedGender
+  String selectedGender = 'Male';
   DateTime selectedBirthDate = DateTime.now();
 
   @override
@@ -127,18 +127,22 @@ class _RegisterState extends State<Register> {
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Flexible(
-                              child: TextFormFieldWidget(
-                                controller: nameController,
-                                hintText: "Name",
-                                validator: (value) {
-                                  return null;
-                                },
-                                displaySuffixIcon: false,
-                                prefixIcon: const Icon(Icons.people),
-                              ),
-                            ),
+                                child: AppTextFormFieldWidget()
+                                    .setController(nameController)
+                                    .setHintText("Name")
+                                    .setPrefixIcon(const Icon(Icons.people))
+                                    .setAutoValidateMode(
+                                        AutovalidateMode.onUserInteraction)
+                                    .setValidator((value) {
+                              if (value!.isEmpty) {
+                                return "Name cannot be empty";
+                              } else {
+                                return null;
+                              }
+                            }).build(context)),
                             const SizedBox(
                               width: 10,
                             ),
@@ -156,81 +160,82 @@ class _RegisterState extends State<Register> {
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Flexible(
-                              child: TextFormFieldWidget(
-                                controller: phoneController,
-                                hintText: "Phone number",
-                                validator: (value) {
-                                  return null;
-                                },
-                                prefixIcon: const Icon(Icons.phone),
-                                displaySuffixIcon: false,
-                                textInputType: TextInputType.number,
-                              ),
+                              child: AppTextFormFieldWidget()
+                                  .setController(phoneController)
+                                  .setAutoValidateMode(
+                                      AutovalidateMode.onUserInteraction)
+                                  .setPrefixIcon(const Icon(Icons.phone))
+                                  .setHintText("Phone Number")
+                                  .setValidator((value) {
+                                if (value?.length != 10) {
+                                  return "Must be equal to 10 char";
+                                }
+                                return null;
+                              }).build(context),
                             ),
                             const SizedBox(
                               width: 10,
                             ),
                             Flexible(
-                              child: TextFormFieldWidget(
-                                controller: TextEditingController(
-                                  text: DateFormat('dd/MM/yyyy')
-                                      .format(selectedBirthDate),
-                                ),
-                                hintText: 'Birth Date',
-                                readOnly: true,
-                                prefixIcon: const Icon(Icons.calendar_month),
-                                displaySuffixIcon: false,
-                                onTap: () => _selectDate(context),
-                                validator: (value) {
-                                  return null;
-                                },
-                              ),
-                            ),
+                                child: AppTextFormFieldWidget()
+                                    .setController(
+                                      TextEditingController(
+                                        text: DateFormat('dd/MM/yyyy')
+                                            .format(selectedBirthDate),
+                                      ),
+                                    )
+                                    .setDisplaySuffixIcon(false)
+                                    .setIsReadOnly(true)
+                                    .setPrefixIcon(
+                                        const Icon(Icons.calendar_month))
+                                    .setOnTap(() {
+                              _selectDate(context);
+                            }).build(context)),
                           ],
                         ),
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormFieldWidget(
-                          controller: addressController,
-                          hintText: 'Address',
-                          prefixIcon: const Icon(Icons.location_on),
-                          displaySuffixIcon: false,
-                          validator: (value) {
+                        AppTextFormFieldWidget()
+                            .setHintText("Address")
+                            .setController(addressController)
+                            .setPrefixIcon(const Icon(Icons.location_on))
+                            .setDisplaySuffixIcon(false)
+                            .setAutoValidateMode(
+                                AutovalidateMode.onUserInteraction)
+                            .setValidator((value) {
+                          if (value!.isEmpty) {
+                            return "Address cannot be empty";
+                          } else {
                             return null;
-                          },
-                          onChanged: (value) {
-                            print('Email changed: $value');
-                          },
-                          textInputType: TextInputType.emailAddress,
-                        ),
+                          }
+                        }).build(context),
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormFieldWidget(
-                          controller: emailController,
-                          hintText: 'Email',
-                          prefixIcon: const Icon(Icons.email),
-                          displaySuffixIcon: false,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Email cannot be empty";
-                            }
-                            if (!RegExp(
-                              "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]",
-                            ).hasMatch(value)) {
-                              return "Please enter a valid email";
-                            } else {
-                              return null;
-                            }
-                          },
-                          onChanged: (value) {
-                            print('Email changed: $value');
-                          },
-                          textInputType: TextInputType.emailAddress,
-                        ),
+                        AppTextFormFieldWidget()
+                            .setController(emailController)
+                            .setAutoValidateMode(
+                                AutovalidateMode.onUserInteraction)
+                            .setHintText("Email")
+                            .setValidator((value) {
+                              if (value!.isEmpty) {
+                                return "Email cannot be empty";
+                              }
+                              if (!RegExp(
+                                "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]",
+                              ).hasMatch(value)) {
+                                return "Please enter a valid email";
+                              } else {
+                                return null;
+                              }
+                            })
+                            .setDisplaySuffixIcon(false)
+                            .setPrefixIcon(const Icon(Icons.email))
+                            .build(context),
                         const SizedBox(
                           height: 20,
                         ),
@@ -262,20 +267,27 @@ class _RegisterState extends State<Register> {
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormFieldWidget(
-                          controller: confirmPasswordController,
-                          prefixIcon: const Icon(Icons.lock),
-                          hintText: 'Confirm password',
-                          obscureText: isObscure2,
-                          validator: (value) {
-                            if (confirmPasswordController.text !=
-                                passwordController.text) {
-                              return "Password did not match";
-                            } else {
-                              return null;
-                            }
-                          },
-                          onChanged: null,
+                        Obx(
+                          () => AppTextFormFieldWidget()
+                              .setController(confirmPasswordController)
+                              .setHintText('Confirm Password')
+                              .setObscureText(isObscure2.value)
+                              .setOnTapSuffixIcon(() {
+                                isObscure2.value = !isObscure2.value;
+                              })
+                              .setValidator((value) {
+                                if (confirmPasswordController.text !=
+                                    passwordController.text) {
+                                  return "Password did not match";
+                                } else {
+                                  return null;
+                                }
+                              })
+                              .setAutoValidateMode(
+                                  AutovalidateMode.onUserInteraction)
+                              .setPrefixIcon(const Icon(Icons.lock))
+                              .setDisplaySuffixIcon(true)
+                              .build(context),
                         ),
                         const SizedBox(
                           height: 20,
