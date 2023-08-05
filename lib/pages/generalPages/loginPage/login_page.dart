@@ -1,21 +1,37 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
+import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_home.dart';
 import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_home.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _isObscure3 = true;
+  final RxBool _isObscure = true.obs;
   bool visible = false;
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  RxBool isLogin = false.obs;
+  var auth = FirebaseAuth.instance;
+
+  void checkIfLogin() async{
+    auth.authStateChanges().listen((User? user) {
+      if(user != null && mounted){
+        isLogin.value = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +40,14 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: <Widget>[
             Container(
-              color: Colors.teal,
+              color: AppColorsExt.backgroundColor,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Center(
                 child: Container(
-                  margin: EdgeInsets.all(12),
+                  margin: const EdgeInsets.all(12),
                   child: Form(
-                    key: _formkey,
+                    key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,157 +59,94 @@ class _LoginPageState extends State<LoginPage> {
                           "Login",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColorsExt.textColor,
                             fontSize: 40,
                           ),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: 'Email',
-                            enabled: true,
-                            contentPadding: const EdgeInsets.only(
-                                left: 14.0, bottom: 8.0, top: 8.0),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
-                              borderRadius: new BorderRadius.circular(10),
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
-                              borderRadius: new BorderRadius.circular(10),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value!.length == 0) {
-                              return "Email cannot be empty";
-                            }
-                            if (!RegExp(
-                                    "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                                .hasMatch(value)) {
-                              return ("Please enter a valid email");
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: (value) {
-                            emailController.text = value!;
-                          },
-                          keyboardType: TextInputType.emailAddress,
+                        AppTextFormFieldWidget()
+                            .setController(emailController)
+                            .setHintText("Email")
+                            .setPrefixIcon(const Icon(Icons.email))
+                            .setAutoValidateMode(
+                                AutovalidateMode.onUserInteraction)
+                            .setValidator((value) {
+                              if (value!.isEmpty) {
+                                return "Email cannot be empty";
+                              }
+                              if (!RegExp(
+                                      "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                  .hasMatch(value)) {
+                                return ("Please enter a valid email");
+                              } else {
+                                return null;
+                              }
+                            })
+                            .setInputType(TextInputType.emailAddress)
+                            .build(context),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Obx(
+                          () => AppTextFormFieldWidget()
+                              .setController(passwordController)
+                              .setHintText("Password")
+                              .setPrefixIcon(const Icon(Icons.lock))
+                              .setDisplaySuffixIcon(true)
+                              .setObscureText(_isObscure.value)
+                              .setOnTapSuffixIcon(() {
+                                _isObscure.value = !_isObscure.value;
+                              })
+                              .setValidator((value) {
+                                if (value!.isEmpty) {
+                                  return "Password cannot be empty";
+                                }
+                              })
+                              .setAutoValidateMode(
+                                  AutovalidateMode.onUserInteraction)
+                              .build(context),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormField(
-                          controller: passwordController,
-                          obscureText: _isObscure3,
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                                icon: Icon(_isObscure3
-                                    ? Icons.visibility
-                                    : Icons.visibility_off),
-                                onPressed: () {
-                                  setState(() {
-                                    _isObscure3 = !_isObscure3;
-                                  });
-                                }),
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: 'Password',
-                            enabled: true,
-                            contentPadding: const EdgeInsets.only(
-                                left: 14.0, bottom: 8.0, top: 15.0),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
-                              borderRadius: new BorderRadius.circular(10),
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
-                              borderRadius: new BorderRadius.circular(10),
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: MaterialButton(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0))),
+                            elevation: 5.0,
+                            height: 40,
+                            onPressed: () {
+                              setState(() {
+                                visible = true;
+                              });
+                              signIn(emailController.text,
+                                  passwordController.text);
+                            },
+                            color: AppColorsExt.buttonColor,
+                            child: const Text(
+                              "Login",
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
                             ),
                           ),
-                          validator: (value) {
-                            RegExp regex = new RegExp(r'^.{6,}$');
-                            if (value!.isEmpty) {
-                              return "Password cannot be empty";
-                            }
-                            if (!regex.hasMatch(value)) {
-                              return ("please enter valid password min. 6 character");
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: (value) {
-                            passwordController.text = value!;
-                          },
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            MaterialButton(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0))),
-                              elevation: 5.0,
-                              height: 40,
-                              onPressed: () {
-                                setState(() {
-                                  visible = true;
-                                });
-                                signIn(
-                                    emailController.text, passwordController.text);
-                              },
-                              color: Colors.white,
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                            MaterialButton(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(20.0))),
-                              elevation: 5.0,
-                              height: 40,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const Register(),
-                                  ),
-                                );
-                              },
-                              color: Colors.white,
-                              child: const Text(
-                                "Register",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        Visibility(
-                            maintainSize: true,
-                            maintainAnimation: true,
-                            maintainState: true,
-                            visible: visible,
-                            child: const CircularProgressIndicator(
-                              color: Colors.white,
-                            )),
+                        // Visibility(
+                        //     maintainSize: true,
+                        //     maintainAnimation: true,
+                        //     maintainState: true,
+                        //     visible: visible,
+                        //     child: const CircularProgressIndicator(
+                        //       color: Colors.white,
+                        //     )),
                       ],
                     ),
                   ),
@@ -221,14 +174,14 @@ class _LoginPageState extends State<LoginPage> {
 
         if (role == "Admin") {
           Navigator.pushReplacement(
-            context,
+            Get.context ?? context,
             MaterialPageRoute(
               builder: (context) => const AdminHome(),
             ),
           );
         } else {
           Navigator.pushReplacement(
-            context,
+            Get.context ?? context,
             MaterialPageRoute(
               builder: (context) => const UserHome(),
             ),
@@ -241,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void signIn(String email, String password) async {
-    if (_formkey.currentState!.validate()) {
+    if (_formKey.currentState!.validate()) {
       try {
         UserCredential userCredential =
             await FirebaseAuth.instance.signInWithEmailAndPassword(

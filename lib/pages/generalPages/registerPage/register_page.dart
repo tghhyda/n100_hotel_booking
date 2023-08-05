@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:n100_hotel_booking/components/dropdownButton/app_dropdown_button_second_type_widget.dart';
 import 'package:n100_hotel_booking/components/dropdownButton/dropdown_button_widget.dart';
 import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
 import 'package:n100_hotel_booking/components/textFormField/text_form_field_widget.dart';
@@ -18,9 +19,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  bool showProgress = false;
-  bool visible = false;
-
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController passwordController = TextEditingController();
@@ -32,13 +30,15 @@ class _RegisterState extends State<Register> {
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
+  bool showProgress = false;
+  bool visible = false;
   String imageUrl = '';
   RxBool isObscure = true.obs;
   RxBool isObscure2 = true.obs;
   File? selectedFile;
   String role = "User";
-  final List<String> items = ['Male', 'Female'];
-  String selectedGender = 'Male';
+  final List<String> listGenders = ['Male', 'Female'];
+  RxString selectedGender = RxString('Male');
   DateTime selectedBirthDate = DateTime.now();
 
   @override
@@ -147,10 +147,16 @@ class _RegisterState extends State<Register> {
                               width: 10,
                             ),
                             Flexible(
-                              child: DropdownButtonWidget(
-                                listItem: items,
-                                labelText: "Gender",
-                                selectedValue: selectedGender,
+                              child: Obx(
+                                () => AppDropdownButtonSecondTypeWidget(
+                                  listItem: listGenders,
+                                  labelText: "Gender",
+                                  selectedValue: selectedGender.value, // Truyền giá trị hiện tại
+                                  onChanged: (value) {
+                                    selectedGender.value = value ?? 'Male'; // Cập nhật giá trị khi thay đổi
+                                  },
+                                ).build(context),
+
                               ),
                             ),
                           ],
@@ -313,7 +319,7 @@ class _RegisterState extends State<Register> {
                               phoneController.text,
                               addressController.text,
                               birthdayController.text,
-                              selectedGender,
+                              selectedGender.value,
                               role,
                             );
                           },
