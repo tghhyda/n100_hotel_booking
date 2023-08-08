@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
 
   RxBool isLogin = false.obs;
+  bool isInvalid = false;
   var auth = FirebaseAuth.instance;
 
   void checkIfLogin() async{
@@ -111,7 +112,8 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 20,
                         ),
-
+                        if(isInvalid)
+                          Text("Invalid account"),
                         SizedBox(
                           width: double.infinity,
                           child: MaterialButton(
@@ -203,6 +205,7 @@ class _LoginPageState extends State<LoginPage> {
         );
         route();
       } on FirebaseAuthException catch (e) {
+        isInvalid = true;
         if (e.code == 'user-not-found') {
           print('No user found for that email.');
         } else if (e.code == 'wrong-password') {
