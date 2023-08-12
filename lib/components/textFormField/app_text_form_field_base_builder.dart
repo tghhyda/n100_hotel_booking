@@ -17,6 +17,7 @@ abstract class AppTextFormFieldBaseBuilder {
   AutovalidateMode? _autoValidateMode;
   String? Function(String? value)? _validator;
   void Function()? _onTapSuffixIcon;
+  String? _initialValue;
 
   AppTextFormFieldBaseBuilder setOnTapSuffixIcon(
       void Function() onTapSuffixIcon);
@@ -24,6 +25,8 @@ abstract class AppTextFormFieldBaseBuilder {
   AppTextFormFieldBaseBuilder setController(TextEditingController controller);
 
   AppTextFormFieldBaseBuilder setHintText(String hintText);
+
+  AppTextFormFieldWidget setInitialValue(String initialValue);
 
   AppTextFormFieldBaseBuilder setOnTap(void Function()? onTap);
 

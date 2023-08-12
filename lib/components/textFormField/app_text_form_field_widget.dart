@@ -43,6 +43,7 @@ class AppTextFormFieldWidget extends AppTextFormFieldBaseBuilder {
       onTap: _onTap,
       readOnly: _isReadOnly ?? false,
       autovalidateMode: _autoValidateMode,
+      initialValue: _initialValue,
     );
   }
 
@@ -123,6 +124,12 @@ class AppTextFormFieldWidget extends AppTextFormFieldBaseBuilder {
   @override
   AppTextFormFieldBaseBuilder setOnTap(void Function()? onTap) {
     _onTap = onTap;
+    return this;
+  }
+
+  @override
+  AppTextFormFieldWidget setInitialValue(String initialValue) {
+    _initialValue = initialValue;
     return this;
   }
 }

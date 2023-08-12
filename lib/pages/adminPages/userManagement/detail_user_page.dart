@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/models/user_model.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
 
 class UserDetailPage extends StatefulWidget {
   final UserModel user;

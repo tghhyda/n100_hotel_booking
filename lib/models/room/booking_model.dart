@@ -1,5 +1,5 @@
+import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
-import 'package:n100_hotel_booking/models/user_model.dart';
 
 class BookingModel {
   final UserModel? user;

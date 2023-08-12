@@ -1,38 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
-import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
-import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/pages/adminPages/admin_home.dart';
-import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_page.dart';
-import 'package:n100_hotel_booking/pages/userPages/user_home.dart';
+part of 'login_controller.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginPage extends GetView<LoginController> {
+  LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final RxBool _isObscure = true.obs;
-  bool visible = false;
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  RxBool isLogin = false.obs;
-  bool isInvalid = false;
-  var auth = FirebaseAuth.instance;
-
-  void checkIfLogin() async{
-    auth.authStateChanges().listen((User? user) {
-      if(user != null && mounted){
-        isLogin.value = true;
-      }
-    });
-  }
+  final controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   margin: const EdgeInsets.all(12),
                   child: Form(
-                    key: _formKey,
+                    key: controller.formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 20,
                         ),
                         AppTextFormFieldWidget()
-                            .setController(emailController)
+                            .setController(controller.emailController)
                             .setHintText("Email")
                             .setPrefixIcon(const Icon(Icons.email))
                             .setAutoValidateMode(
@@ -92,13 +64,14 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         Obx(
                           () => AppTextFormFieldWidget()
-                              .setController(passwordController)
+                              .setController(controller.passwordController)
                               .setHintText("Password")
                               .setPrefixIcon(const Icon(Icons.lock))
                               .setDisplaySuffixIcon(true)
-                              .setObscureText(_isObscure.value)
+                              .setObscureText(controller.isObscure.value)
                               .setOnTapSuffixIcon(() {
-                                _isObscure.value = !_isObscure.value;
+                                controller.isObscure.value =
+                                    !controller.isObscure.value;
                               })
                               .setValidator((value) {
                                 if (value!.isEmpty) {
@@ -112,8 +85,14 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 20,
                         ),
-                        if(isInvalid)
-                          Text("Invalid account"),
+                        if (controller.isInvalid) const Text("Invalid account"),
+                        Obx(() => AppCheckBoxWidget()
+                            .setValue(controller.keepLoggedIn.value)
+                            .setOnChanged((value) {
+                              controller.toggleKeepLoggedIn(value!);
+                            })
+                            .setTitle("Remember me?")
+                            .build(context)),
                         SizedBox(
                           width: double.infinity,
                           child: MaterialButton(
@@ -122,12 +101,22 @@ class _LoginPageState extends State<LoginPage> {
                                     BorderRadius.all(Radius.circular(20.0))),
                             elevation: 5.0,
                             height: 40,
-                            onPressed: () {
-                              setState(() {
-                                visible = true;
-                              });
-                              signIn(emailController.text,
-                                  passwordController.text);
+                            onPressed: () async {
+                              controller.signIn(
+                                  context,
+                                  controller.emailController.text,
+                                  controller.passwordController.text);
+
+                              if (controller.keepLoggedIn.value == true) {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.setString(
+                                  'userEmail',
+                                  controller.emailController.text,
+                                );
+                                prefs.setString('userPassword',
+                                    controller.passwordController.text);
+                              }
                             },
                             color: AppColorsExt.buttonColor,
                             child: const Text(
@@ -139,16 +128,61 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(
-                          height: 10,
+                          height: 20,
                         ),
-                        // Visibility(
-                        //     maintainSize: true,
-                        //     maintainAnimation: true,
-                        //     maintainState: true,
-                        //     visible: visible,
-                        //     child: const CircularProgressIndicator(
-                        //       color: Colors.white,
-                        //     )),
+                        GestureDetector(
+                          child: AppTextBody1Widget()
+                              .setText("Forgot your password?")
+                              .setColor(AppColors.of.yellowColor[6])
+                              .setTextStyle(AppTextStyleExt.of.textBody1s)
+                              .build(context),
+                          onTap: () {
+                            Get.to(() => ForgotPasswordPage());
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const DividerWidget(title: 'or continue with'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SquareTileWidget(
+                                imagePath: 'assets/defaultImage/google.png',
+                                onTap: () {
+                                  controller.signInWithGoogle();
+                                }),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SquareTileWidget(
+                                imagePath: 'assets/defaultImage/facebook.png',
+                                onTap: () {})
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AppTextBody1Widget()
+                                .setText("Don't have an account?")
+                                .setColor(AppColors.of.grayColor[8])
+                                .build(context),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              child: AppTextBody1Widget()
+                                  .setText("Sign Up")
+                                  .setTextStyle(AppTextStyleExt.of.textBody1s)
+                                  .setColor(AppColors.of.yellowColor[6])
+                                  .build(context),
+                              onTap: () {
+                                Get.to(() => const Register());
+                              },
+                            )
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -159,59 +193,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  void route() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: user.email)
-          .get()
-          .then((querySnapshot) => querySnapshot.docs.first);
-
-      if (documentSnapshot.exists) {
-        String role = documentSnapshot.get('role');
-
-        if (role == "Admin") {
-          Navigator.pushReplacement(
-            Get.context ?? context,
-            MaterialPageRoute(
-              builder: (context) => const AdminHome(),
-            ),
-          );
-        } else {
-          Navigator.pushReplacement(
-            Get.context ?? context,
-            MaterialPageRoute(
-              builder: (context) => const UserHome(),
-            ),
-          );
-        }
-      } else {
-        print('Document does not exist in the database');
-      }
-    }
-  }
-
-  void signIn(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        route();
-      } on FirebaseAuthException catch (e) {
-        isInvalid = true;
-        if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
-        }
-      }
-    }
   }
 }

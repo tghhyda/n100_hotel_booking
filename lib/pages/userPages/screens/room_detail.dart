@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/constants/app_url_ext.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
-import 'package:n100_hotel_booking/models/user_model.dart';
 import 'package:n100_hotel_booking/pages/generalPages/booking_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/review_room.dart';
-import 'package:n100_hotel_booking/pages/userPages/widgets/room_trait.dart';
 
 class RoomDetail extends StatefulWidget {
   const RoomDetail({Key? key, required this.room}) : super(key: key);
@@ -49,13 +47,14 @@ class _RoomDetailState extends State<RoomDetail> {
       if (snapshot.docs.isNotEmpty) {
         DocumentSnapshot userDocument = snapshot.docs.first;
         _userModel = UserModel(
-          userDocument['name'],
-          userDocument['birthday'],
-          userDocument['phone'],
-          userDocument['imageUrl'],
-          userDocument['role'],
-          userDocument['email'],
-          userDocument['address'],
+          nameUser: userDocument['name'],
+          birthday: userDocument['birthday'],
+          phoneNumber: userDocument['phone'],
+          imageUrl: userDocument['imageUrl'],
+          role: userDocument['role'],
+          email: userDocument['email'],
+          address: userDocument['address'],
+          gender: userDocument['gender'],
         );
         print('${_userModel!.nameUser} -----------------------------------');
       } else {

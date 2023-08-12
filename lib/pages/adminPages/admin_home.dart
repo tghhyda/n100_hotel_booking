@@ -5,7 +5,7 @@ import 'package:n100_hotel_booking/pages/adminPages/admin_booking_management.dar
 import 'package:n100_hotel_booking/pages/adminPages/admin_others_model_management.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_room_management_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_user_management_page.dart';
-import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_page.dart';
+import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_controller.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({Key? key}) : super(key: key);

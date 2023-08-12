@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/models/room/booking_model.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/models/room/room_model.dart';
-import 'package:n100_hotel_booking/models/user_model.dart';
 
 class BookingPage extends StatefulWidget {
   final UserModel currentUser;

@@ -1,47 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_page.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
+import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_controller.dart';
 
 class RegisterController {
   void signUp(
       BuildContext context,
       GlobalKey<FormState> formKey,
-      String email,
       String password,
-      String imageUrl,
-      String name,
-      String phone,
-      String address,
-      String birthday,
-      String gender,
-      String role) async {
+      UserModel userModel
+      ) async {
     const CircularProgressIndicator();
     if (formKey.currentState!.validate()) {
       await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password)
+          .createUserWithEmailAndPassword(email: userModel.email, password: password)
           .then((value) => {
                 postDetailsToFireStore(
-                    context, email, imageUrl, name, phone, address, birthday, gender, role)
+                    context, userModel)
               })
           .catchError((e) {});
     }
   }
 
-  postDetailsToFireStore(BuildContext context, String email, String imageUrl,
-      String name, String phone, String address, String birthday, String gender, String role) async {
+  postDetailsToFireStore(BuildContext context, UserModel userModel) async {
     FirebaseFirestore firebaseFireStore = FirebaseFirestore.instance;
     CollectionReference ref = firebaseFireStore.collection('users');
-    ref.doc(email).set({
-      'email': email,
-      'imageUrl': imageUrl,
-      'name': name,
-      'phone': phone,
-      'address': address,
-      'birthday': birthday,
-      'gender': gender,
-      'role': role
-    });
+    ref.doc(userModel.email).set(userModel.toJson());
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));
   }

@@ -1,11 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/models/room/room_model.dart';
-import 'package:n100_hotel_booking/models/user_model.dart';
-import 'package:n100_hotel_booking/pages/adminPages/register_for_staff_page.dart';
-import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/userManagement/detail_user_page.dart';
 
 class AdminUserManagementPage extends StatefulWidget {
@@ -34,7 +30,16 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
       String birthday = doc['birthday'] as String;
       String imageUrl = doc['imageUrl'] as String;
       String role = doc['role'] as String;
-      return UserModel(name, birthday, phone, imageUrl, role, email, address);
+      String gender = doc['gender'] as String;
+      return UserModel(
+          nameUser: name,
+          birthday: birthday,
+          phoneNumber: phone,
+          imageUrl: imageUrl,
+          role: role,
+          email: email,
+          address: address,
+          gender: gender);
     }).toList();
     setState(() {
       filteredUserList = users;
@@ -68,17 +73,23 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
           String birthday = doc['birthday'] as String;
           String imageUrl = doc['imageUrl'] as String;
           String role = doc['role'] as String;
-          return UserModel(name, birthday, phone, imageUrl, role, email, address);
-        })
-            .toList();
+          String gender = doc['gender'] as String;
+          return UserModel(
+              nameUser: name,
+              birthday: birthday,
+              phoneNumber: phone,
+              imageUrl: imageUrl,
+              role: role,
+              email: email,
+              address: address,
+              gender: gender);
+        }).toList();
         setState(() {
           filteredUserList = filteredUsers;
         });
       });
     }
   }
-
-
 
   void _deleteUser(UserModel userModel) {
     FirebaseFirestore.instance

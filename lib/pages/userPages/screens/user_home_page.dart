@@ -6,7 +6,6 @@ import 'package:n100_hotel_booking/models/room/room_model.dart';
 import 'package:n100_hotel_booking/models/room/status_room_model.dart';
 import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/widgets/room_item.dart';
-import 'package:n100_hotel_booking/models/user_model.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({Key? key}) : super(key: key);
