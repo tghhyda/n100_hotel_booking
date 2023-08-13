@@ -143,7 +143,7 @@ class LoginPage extends GetView<LoginController> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SquareTileWidget(
-                        imagePath: 'assets/defaultImage/google.png',
+                        imagePath: 'assets/defaultImage/google_logo.png',
                         onTap: () {
                           controller.signInWithGoogle();
                         }),
@@ -151,7 +151,7 @@ class LoginPage extends GetView<LoginController> {
                       width: 10,
                     ),
                     SquareTileWidget(
-                        imagePath: 'assets/defaultImage/facebook.png',
+                        imagePath: 'assets/defaultImage/facebook_logo.png',
                         onTap: () {})
                   ],
                 ),
