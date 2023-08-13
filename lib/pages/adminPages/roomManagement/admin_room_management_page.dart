@@ -2,11 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/constants/app_url_ext.dart';
-import 'package:n100_hotel_booking/models/room/convenient_model.dart';
-import 'package:n100_hotel_booking/models/room/review_model.dart';
-import 'package:n100_hotel_booking/models/room/room_model.dart';
-import 'package:n100_hotel_booking/models/room/status_room_model.dart';
-import 'package:n100_hotel_booking/models/room/type_room_model.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/room_detail_page.dart';
 

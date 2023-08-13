@@ -1,8 +1,7 @@
-import 'package:n100_hotel_booking/models/room/convenient_model.dart';
-import 'package:n100_hotel_booking/models/room/review_model.dart';
-import 'package:n100_hotel_booking/models/room/status_room_model.dart';
-import 'package:n100_hotel_booking/models/room/type_room_model.dart';
 
+part of '../base_model.dart';
+
+@JsonSerializable()
 class RoomModel {
   final String idRoom;
   final TypeRoomModel typeRoom;
@@ -17,4 +16,9 @@ class RoomModel {
   RoomModel(this.typeRoom, this.priceRoom, this.capacity, this.statusRoom,
       this.convenient, this.review, this.description, this.images,
       {required this.idRoom});
+
+  factory RoomModel.fromJson(Map<String, dynamic> json) =>
+      _$RoomModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RoomModelToJson(this);
 }

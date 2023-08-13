@@ -1,6 +1,6 @@
-import 'package:n100_hotel_booking/models/base_model.dart';
-import 'package:n100_hotel_booking/models/room/room_model.dart';
+part of '../base_model.dart';
 
+@JsonSerializable()
 class BookingModel {
   final UserModel? user;
   final RoomModel? room;
@@ -16,4 +16,9 @@ class BookingModel {
       {required bool isCheckIn,
       required bool isCheckOut,
       required bool isPayment});
+
+  factory BookingModel.fromJson(Map<String, dynamic> json) =>
+      _$BookingModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BookingModelToJson(this);
 }

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:n100_hotel_booking/components/button/app_button_base_builder.dart';
 import 'package:n100_hotel_booking/components/snackBar/app_snack_bar_base_builder.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
@@ -22,9 +21,7 @@ class ForgotPasswordController extends GetxController {
           .setText("Password reset email sent")
           .build(Get.context ?? context))
           .showSnackBar(Get.context ?? context);
-      print("qqqqqqqqqqqqqqqqqq");
     }on FirebaseAuthException catch(e){
-      print(e);
       AppSnackBarWidget()
           .setContent(AppTextBody1Widget()
           .setText(e.message)

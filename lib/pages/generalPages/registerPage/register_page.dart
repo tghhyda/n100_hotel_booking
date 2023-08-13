@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:n100_hotel_booking/components/dropdownButton/app_dropdown_button_second_type_widget.dart';
 import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
+import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_controller.dart';
@@ -75,8 +76,8 @@ class _RegisterState extends State<Register> {
                             children: [
                               buildImagePreview(),
                               Positioned(
-                                bottom: -10,
-                                left: 80,
+                                bottom: 0,
+                                left: 70,
                                 child: IconButton(
                                   onPressed: () async {
                                     ImagePicker imagePicker = ImagePicker();
@@ -321,7 +322,7 @@ class _RegisterState extends State<Register> {
                               registerController.signUp(context, _formKey,
                                   passwordController.text, userModel);
                             },
-                            color: Colors.white,
+                            color: AppColors.of.yellowColor[5],
                             child: const Text(
                               "Register",
                               style: TextStyle(

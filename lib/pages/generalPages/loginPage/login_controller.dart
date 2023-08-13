@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 import 'package:n100_hotel_booking/components/selection/app_check_box_widget.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
@@ -58,9 +59,12 @@ class LoginController extends GetxController {
         await userDoc.set({
           'email': user.email,
           'role': 'User', // Lưu vai trò là "user"
-          'phoneNumber': user.phoneNumber,
-          'name': user.displayName,
-          'imageUrl': user.photoURL
+          'phoneNumber': '0101010101',
+          'nameUser': user.displayName,
+          'imageUrl': user.photoURL,
+          'gender': 'Male',
+          'birthday': DateFormat('dd-MM-yyyy HH:mm:ss').format(DateTime.now()),
+          'address': 'Somewhere'
         });
         route(Get.context!);
       }
@@ -74,7 +78,7 @@ class LoginController extends GetxController {
     bool? temp = prefs.getBool('keepLoggedIn');
 
     if (keepLoggedIn != null) {
-      keepLoggedIn.value = temp!;
+      keepLoggedIn.value = temp ?? false;
     }
   }
 
@@ -122,7 +126,7 @@ class LoginController extends GetxController {
           Navigator.pushReplacement(
             Get.context ?? context,
             MaterialPageRoute(
-              builder: (context) => const UserHome(),
+              builder: (context) => UserHome(),
             ),
           );
         }

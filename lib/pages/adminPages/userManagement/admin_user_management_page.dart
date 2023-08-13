@@ -18,33 +18,25 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
   List<UserModel> filteredUserList = [];
 
   void fetchUserList() async {
-    QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('role', isNotEqualTo: 'Admin')
-        .get();
-    List<UserModel> users = userSnapshot.docs.map((doc) {
-      String name = doc['name'] as String;
-      String email = doc['email'] as String;
-      String address = doc['address'] as String;
-      String phone = doc['phone'] as String;
-      String birthday = doc['birthday'] as String;
-      String imageUrl = doc['imageUrl'] as String;
-      String role = doc['role'] as String;
-      String gender = doc['gender'] as String;
-      return UserModel(
-          nameUser: name,
-          birthday: birthday,
-          phoneNumber: phone,
-          imageUrl: imageUrl,
-          role: role,
-          email: email,
-          address: address,
-          gender: gender);
-    }).toList();
-    setState(() {
-      filteredUserList = users;
-    });
+    try {
+      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isNotEqualTo: 'Admin')
+          .get();
+
+      List<UserModel> users = userSnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return UserModel.fromJson(data);
+      }).toList();
+
+      setState(() {
+        filteredUserList = users;
+      });
+    } catch (_) {
+      rethrow;
+    }
   }
+
 
   @override
   void initState() {
@@ -154,30 +146,6 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
                     ),
                   ),
                 ),
-                // Flexible(
-                //   flex: 2,
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: InkWell(
-                //       onTap: () {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //             builder: (context) => RegisterForStaff(),
-                //           ),
-                //         );
-                //       },
-                //       child: Container(
-                //         padding: const EdgeInsets.all(8),
-                //         decoration: BoxDecoration(
-                //           shape: BoxShape.circle,
-                //           color: Colors.grey.withOpacity(0.2),
-                //         ),
-                //         child: const Icon(Icons.add),
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),

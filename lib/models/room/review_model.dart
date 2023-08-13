@@ -1,3 +1,6 @@
+part of '../base_model.dart';
+
+@JsonSerializable()
 class ReviewModel {
   final String idReview;
   final String user;
@@ -8,5 +11,10 @@ class ReviewModel {
 
   ReviewModel(this.idReview, this.user, this.room, this.timeReview,
       this.detailReview, this.rate);
+
+  factory ReviewModel.fromJson(Map<String, dynamic> json) =>
+      _$ReviewModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ReviewModelToJson(this);
 
 }

@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/pages/adminPages/admin_booking_management.dart';
-import 'package:n100_hotel_booking/pages/adminPages/admin_others_model_management.dart';
-import 'package:n100_hotel_booking/pages/adminPages/admin_room_management_page.dart';
-import 'package:n100_hotel_booking/pages/adminPages/admin_user_management_page.dart';
+import 'package:n100_hotel_booking/pages/adminPages/bookingManagement/admin_booking_management.dart';
+import 'package:n100_hotel_booking/pages/adminPages/otherManagement/admin_others_model_management.dart';
+import 'package:n100_hotel_booking/pages/adminPages/roomManagement/admin_room_management_page.dart';
+import 'package:n100_hotel_booking/pages/adminPages/userManagement/admin_user_management_page.dart';
 import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_controller.dart';
+import 'package:get/get.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _AdminHomeState extends State<AdminHome> {
   final List<Widget> _pages = [
     const AdminOthersModelManagement(),
     const AdminBookingManagement(),
-    AdminHomePage(),
+    const AdminHomePage(),
     const AdminRoomManagementPage(),
     const AdminUserManagementPage(),
 
@@ -86,9 +87,8 @@ class _AdminHomeState extends State<AdminHome> {
       await FirebaseAuth.instance.signOut();
       // Đăng xuất thành công, chuyển đến trang đăng nhập
       Navigator.pushAndRemoveUntil(
-        context,
+        Get.context ?? context,
         MaterialPageRoute(builder: (context) => LoginPage()),
-        // Thay thế bằng trang đăng nhập của bạn
         (Route<dynamic> route) => false,
       );
     } catch (e) {
@@ -99,6 +99,8 @@ class _AdminHomeState extends State<AdminHome> {
 }
 
 class AdminHomePage extends StatelessWidget {
+  const AdminHomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(

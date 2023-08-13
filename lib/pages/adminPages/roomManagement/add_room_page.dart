@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:n100_hotel_booking/components/textFormField/text_form_field_widget.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/models/room/convenient_model.dart';
-import 'package:n100_hotel_booking/models/room/status_room_model.dart';
-import 'package:n100_hotel_booking/models/room/type_room_model.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
 import 'admin_room_controller.dart';
 
 class AddRoomPage extends StatefulWidget {

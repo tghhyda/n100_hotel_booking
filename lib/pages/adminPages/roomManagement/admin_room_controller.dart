@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:n100_hotel_booking/models/room/convenient_model.dart';
-import 'package:n100_hotel_booking/models/room/status_room_model.dart';
-import 'package:n100_hotel_booking/models/room/type_room_model.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
+
 
 class AdminRoomController {
   postDetailsRoomToFireStore(

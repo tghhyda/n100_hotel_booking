@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/models/room/room_model.dart';
+import 'package:n100_hotel_booking/models/base_model.dart';
 
 import 'edit_room_page.dart';
 
