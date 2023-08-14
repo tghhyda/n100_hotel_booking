@@ -29,9 +29,13 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
     };
 
 RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
+      json['idRoom'] as String,
       TypeRoomModel.fromJson(json['typeRoom'] as Map<String, dynamic>),
       json['priceRoom'] as int,
       json['capacity'] as int,
+      json['area'] as int,
+      json['beds'] as int,
+      json['quantity'] as int,
       StatusRoomModel.fromJson(json['statusRoom'] as Map<String, dynamic>),
       (json['convenient'] as List<dynamic>?)
           ?.map((e) => e == null
@@ -43,9 +47,8 @@ RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
               ? null
               : ReviewModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      json['description'] as String,
       (json['images'] as List<dynamic>?)?.map((e) => e as String?).toList(),
-      idRoom: json['idRoom'] as String,
+      json['description'] as String,
     );
 
 Map<String, dynamic> _$RoomModelToJson(RoomModel instance) => <String, dynamic>{
@@ -53,6 +56,9 @@ Map<String, dynamic> _$RoomModelToJson(RoomModel instance) => <String, dynamic>{
       'typeRoom': instance.typeRoom,
       'priceRoom': instance.priceRoom,
       'capacity': instance.capacity,
+      'area': instance.area,
+      'beds': instance.beds,
+      'quantity': instance.quantity,
       'statusRoom': instance.statusRoom,
       'convenient': instance.convenient,
       'review': instance.review,
@@ -85,10 +91,12 @@ BookingModel _$BookingModelFromJson(Map<String, dynamic> json) => BookingModel(
       json['endDate'] == null
           ? null
           : DateTime.parse(json['endDate'] as String),
-      json['numberOfPeople'] as int?,
-      isCheckIn: json['isCheckIn'] as bool,
-      isCheckOut: json['isCheckOut'] as bool,
-      isPayment: json['isPayment'] as bool,
+      json['numberOfRooms'] as int?,
+      json['numberOfAdult'] as int?,
+      json['numberOfChildren'] as int?,
+      json['isCheckIn'] as bool?,
+      json['isCheckOut'] as bool?,
+      json['isPayment'] as bool?,
     );
 
 Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
@@ -97,7 +105,9 @@ Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
       'room': instance.room,
       'startDate': instance.startDate?.toIso8601String(),
       'endDate': instance.endDate?.toIso8601String(),
-      'numberOfPeople': instance.numberOfPeople,
+      'numberOfRooms': instance.numberOfRooms,
+      'numberOfAdult': instance.numberOfAdult,
+      'numberOfChildren': instance.numberOfChildren,
       'isCheckIn': instance.isCheckIn,
       'isCheckOut': instance.isCheckOut,
       'isPayment': instance.isPayment,

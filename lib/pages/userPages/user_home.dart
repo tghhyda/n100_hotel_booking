@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/user_home_page.dart';
@@ -21,7 +22,15 @@ class UserHome extends GetView<UserController> {
         backgroundColor: AppColorsExt.backgroundColor,
         appBar: AppBar(
           title: const Text('User'),
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColorsExt.backgroundColor,
+          elevation: 1,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  controller.handleSignOut();
+                },
+                icon: const Icon(Icons.logout))
+          ],
         ),
         body: _pages[_currentPageIndex.value],
         bottomNavigationBar: Obx(

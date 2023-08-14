@@ -22,7 +22,7 @@ class _AdminHomeState extends State<AdminHome> {
     const AdminOthersModelManagement(),
     const AdminBookingManagement(),
     const AdminHomePage(),
-    const AdminRoomManagementPage(),
+    AdminRoomManagementPage(),
     const AdminUserManagementPage(),
 
   ];

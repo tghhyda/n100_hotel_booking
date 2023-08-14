@@ -176,8 +176,7 @@ class _EditRoomPageState extends State<EditRoomPage> {
                                   const SizedBox(
                                     width: 12,
                                   ),
-                                  Text(
-                                    item.nameTypeRoom,
+                                  Text('cc',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black,

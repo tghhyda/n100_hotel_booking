@@ -27,12 +27,16 @@ class AppTextFormFieldWidget extends AppTextFormFieldBaseBuilder {
           bottom: 8.0,
           top: 8.0,
         ),
+        border: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(8),
+        ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(8),
         ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
           borderRadius: BorderRadius.circular(8),
         ),
       ),

@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "1058998344386-cnnjs4cdst5pnmnltv9cj5ofpvm7q28l.apps.googleusercontent.com",
+          "client_id": "1058998344386-gq9is72c5efsv36a552eg1db755ihrol.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tdtu.n100_hotel_booking",
+            "certificate_hash": "965a432a2627a8b7e54e507e413a613f3182a50b"
+          }
+        },
+        {
+          "client_id": "1058998344386-5q992mdn2h2rlumgmpdu7vg09lq93qu9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1058998344386-cnnjs4cdst5pnmnltv9cj5ofpvm7q28l.apps.googleusercontent.com",
+              "client_id": "1058998344386-5q992mdn2h2rlumgmpdu7vg09lq93qu9.apps.googleusercontent.com",
               "client_type": 3
             },
             {

@@ -44,7 +44,6 @@ class PickNumberWidget extends StatelessWidget {
                   if (theNumberOfX.value < 0) {
                     theNumberOfX.value = 0;
                   }
-                  print(theNumberOfX.value);
                 },
                 child: const Icon(Icons.exposure_minus_1)),
             Obx(() => Padding(
@@ -66,7 +65,6 @@ class PickNumberWidget extends StatelessWidget {
                 ),
                 onPressed: () {
                   theNumberOfX.value += 1;
-                  print(theNumberOfX.value);
                 },
                 child: const Icon(Icons.plus_one)),
           ],

@@ -70,6 +70,7 @@ class LoginController extends GetxController {
       }
     } catch (e) {
       print('Error signing in with Google: $e');
+      rethrow;
     }
   }
 

@@ -1,193 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
+import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
+import 'package:n100_hotel_booking/pages/adminPages/admin_controller.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
-import 'package:n100_hotel_booking/pages/adminPages/roomManagement/room_detail_page.dart';
 
-class AdminRoomManagementPage extends StatefulWidget {
-  const AdminRoomManagementPage({Key? key}) : super(key: key);
+class AdminRoomManagementPage extends GetView<AdminController> {
 
   @override
-  State<AdminRoomManagementPage> createState() =>
-      _AdminRoomManagementPageState();
-}
+  final controller = Get.put(AdminController());
 
-class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
+  AdminRoomManagementPage({super.key});
+
   TextEditingController searchController = TextEditingController();
 
-  List<RoomModel> filteredRoomList = [];
-
-  void refreshRoomList() {
-    fetchRoomList();
-  }
-
-  void fetchRoomList() async {
-    QuerySnapshot roomSnapshot =
-        await FirebaseFirestore.instance.collection('rooms').get();
-    List<RoomModel> rooms = roomSnapshot.docs.map((doc) {
-      String idRoom = doc['idRoom'] as String;
-
-      Map<String, dynamic> typeRoomData =
-          doc['typeRoom'] as Map<String, dynamic>;
-      TypeRoomModel typeRoom = TypeRoomModel(
-        typeRoomData['idTypeRoom'] as String,
-        typeRoomData['nameTypeRoom'] as String,
-      );
-
-      int priceRoom = doc['price'] as int;
-      int capacity = doc['capacity'] as int;
-
-      Map<String, dynamic> statusRoomData =
-          doc['statusRoom'] as Map<String, dynamic>;
-      StatusRoomModel statusRoom = StatusRoomModel(
-        statusRoomData['idStatus'] as String,
-        statusRoomData['description'] as String,
-      );
-
-      List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
-      List<ConvenientModel?> convenients =
-          convenientsData.map((convenientData) {
-        Map<String, dynamic> data = convenientData as Map<String, dynamic>;
-        return ConvenientModel(
-          data['idConvenient'] as String,
-          data['nameConvenient'] as String,
-        );
-      }).toList();
-
-      List<String> imageUrls = (doc['images'] as List<dynamic>).cast<String>();
-
-      List<dynamic> reviewDatas = doc['feedbacks'] as List<dynamic>;
-      List<ReviewModel?> reviews = reviewDatas.map((reviewData) {
-        Map<String, dynamic> data = reviewData as Map<String, dynamic>;
-        return ReviewModel(
-          data['idReview'] as String,
-          data['user'] as String,
-          data['room'] as String,
-          data['timeReview'] as String,
-          data['detailReview'] as String,
-          data['rate'] as int,
-        );
-      }).toList();
-
-      String description = doc['descriptionRoom'] as String;
-      return RoomModel(
-        typeRoom,
-        priceRoom,
-        capacity,
-        statusRoom,
-        convenients,
-        reviews,
-        // Đã cập nhật ở đây để lấy dữ liệu reviews dựa vào model ReviewModel
-        description,
-        imageUrls,
-        idRoom: idRoom,
-      );
-    }).toList();
-
-    setState(() {
-      filteredRoomList = rooms;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchRoomList();
-  }
-
-  void searchRooms(String keyword) {
-    if (keyword.isEmpty) {
-      setState(() {
-        fetchRoomList();
-      });
-    } else {
-      FirebaseFirestore.instance
-          .collection('rooms')
-          .where('idRoom', isGreaterThanOrEqualTo: keyword)
-          .where('idRoom', isLessThanOrEqualTo: keyword + '\uf8ff')
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        List<RoomModel> filteredRooms = querySnapshot.docs.map((doc) {
-          String idRoom = doc['idRoom'] as String;
-
-          Map<String, dynamic> typeRoomData =
-              doc['typeRoom'] as Map<String, dynamic>;
-          TypeRoomModel typeRoom = TypeRoomModel(
-            typeRoomData['idTypeRoom'] as String,
-            typeRoomData['nameTypeRoom'] as String,
-          );
-
-          int priceRoom = doc['price'] as int;
-          int capacity = doc['capacity'] as int;
-
-          Map<String, dynamic> statusRoomData =
-              doc['statusRoom'] as Map<String, dynamic>;
-          StatusRoomModel statusRoom = StatusRoomModel(
-            statusRoomData['idStatus'] as String,
-            statusRoomData['description'] as String,
-          );
-
-          List<dynamic> convenientsData = doc['convenients'] as List<dynamic>;
-          List<ConvenientModel?> convenients =
-              convenientsData.map((convenientData) {
-            Map<String, dynamic> data = convenientData as Map<String, dynamic>;
-            return ConvenientModel(
-              data['idConvenient'] as String,
-              data['nameConvenient'] as String,
-            );
-          }).toList();
-
-          List<String> imageUrls =
-              (doc['images'] as List<dynamic>).cast<String>();
-          List<dynamic> reviewDatas = doc['feedbacks'] as List<dynamic>;
-          List<ReviewModel?> reviews = reviewDatas.map((reviewData) {
-            Map<String, dynamic> data = reviewData as Map<String, dynamic>;
-            return ReviewModel(
-              data['idReview'] as String,
-              data['user'] as String,
-              data['room'] as String,
-              data['timeReview'] as String,
-              data['detailReview'] as String,
-              data['rate'] as int,
-            );
-          }).toList();
-          String description = doc['descriptionRoom'] as String;
-          return RoomModel(typeRoom, priceRoom, capacity, statusRoom,
-              convenients, reviews, description, imageUrls,
-              idRoom: idRoom);
-        }).toList();
-        setState(() {
-          filteredRoomList = filteredRooms;
-        });
-      }).catchError((error) {
-        // Handle any potential errors during the search
-        print("Error searching rooms: $error");
-      });
-    }
-  }
-
-  void _deleteRoom(RoomModel room) {
-    FirebaseFirestore.instance
-        .collection('rooms')
-        .where('idRoom', isEqualTo: room.idRoom)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        doc.reference.delete();
-      }
-      fetchRoomList();
-    });
-  }
-
-  void _navigateToRoomDetail(RoomModel room) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RoomDetailPage(room: room),
-      ),
-    );
+  Future<List<RoomModel>> fetchRoomList() async {
+    List<RoomModel> roomList = await controller.fetchRoomList();
+    return roomList;
   }
 
   @override
@@ -210,7 +42,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                     child: TextField(
                       controller: searchController,
                       onChanged: (value) {
-                        searchRooms(value);
+                        // searchRooms(value);
                       },
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -234,14 +66,7 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddRoomPage(
-                              onAddRoomCallback: refreshRoomList,
-                            ),
-                          ),
-                        );
+                        Get.to(()=> AddRoomPage());
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8),
@@ -258,73 +83,58 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredRoomList.length,
-              itemBuilder: (context, index) {
-                RoomModel room = filteredRoomList[index];
-                return InkWell(
-                  onTap: () {
-                    _navigateToRoomDetail(
-                        room); // Chuyển hướng sang trang chi tiết phòng khi nhấp vào phòng
-                  },
-                  child: Container(
-                    color: Colors.transparent,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 80,
-                            color: Colors.grey.withOpacity(0.2),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                room.images!.isNotEmpty
-                                    ? room.images![0] ??
-                                        AppUrlExt.defaultRoomImage
-                                    : AppUrlExt.defaultRoomImage,
+            child: FutureBuilder<List<RoomModel>>(
+              future: fetchRoomList(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  List<RoomModel> roomList = snapshot.data!;
+                  return SizedBox(
+                    height: 200,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal, // Đặt hướng cuộn là ngang
+                      itemCount: roomList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        RoomModel room = roomList[index];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            // Điều chỉnh góc bo tròn tùy theo nhu cầu
+                            side: const BorderSide(
+                              color: Colors.grey, // Màu viền
+                              width: 1, // Độ dày của viền
+                            ),
+                          ),
+                          shadowColor: AppColors.of.grayColor[10],
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.network(
+                                room.images![0]!,
+                                width: 150,
+                                height: 150,
                                 fit: BoxFit.cover,
                               ),
-                            ),
+                              const SizedBox(
+                                height: 4,
+                              ),
+                              AppTextBody1Widget()
+                                  .setText(room.typeRoom.nameTypeRoom)
+                                  .setTextOverFlow(TextOverflow.ellipsis)
+                                  .setMaxLines(1)
+                                  .build(context)
+                            ],
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              // mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  room.idRoom,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                Text(
-                                  'Status: ${room.statusRoom.description}',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  'Price: ${room.priceRoom.toString()} VNĐ',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              _deleteRoom(room);
-                            },
-                            color: Colors.white,
-                            icon: const Icon(Icons.delete),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  return const Center(child: Text('No data available.'));
+                }
               },
             ),
           ),
@@ -332,4 +142,5 @@ class _AdminRoomManagementPageState extends State<AdminRoomManagementPage> {
       ),
     );
   }
+
 }

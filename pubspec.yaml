@@ -53,6 +53,7 @@ dependencies:
   google_sign_in: ^6.1.4
   google_sign_in_android: ^6.1.18
   flutter_date_range_picker: ^0.0.14
+  another_carousel_pro: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/defaultImage/
+    - assets/adsImage/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
