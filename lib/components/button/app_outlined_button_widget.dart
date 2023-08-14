@@ -105,7 +105,6 @@ class AppOutlinedButtonWidget extends AppButtonBaseBuilder {
                   padding: EdgeInsets.all(buttonPadding), child: _prefixIcon),
             ),
           )
-        //TODO : improve circle button
         : Container(
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -121,7 +120,10 @@ class AppOutlinedButtonWidget extends AppButtonBaseBuilder {
                   padding: EdgeInsets.all(buttonPadding),
                   child: Row(
                     children: [
-                      AppTextBody1Widget().setText(_buttonText!).setTextStyle(_textStyle).build(context)
+                      AppTextBody1Widget()
+                          .setText(_buttonText!)
+                          .setTextStyle(_textStyle)
+                          .build(context)
                     ],
                   )),
             ),
@@ -167,8 +169,10 @@ class AppOutlinedButtonWidget extends AppButtonBaseBuilder {
                     ),
                   ),
                 ),
-                child:
-                    AppTextBody1Widget().setText(_buttonText!).setTextStyle(_textStyle).build(context),
+                child: AppTextBody1Widget()
+                    .setText(_buttonText!)
+                    .setTextStyle(_textStyle)
+                    .build(context),
               ));
   }
 

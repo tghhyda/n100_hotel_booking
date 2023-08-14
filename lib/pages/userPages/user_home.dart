@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/user_home_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/user_setting.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
@@ -17,8 +18,10 @@ class UserHome extends GetView<UserController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: AppColorsExt.backgroundColor,
         appBar: AppBar(
           title: const Text('User'),
+          backgroundColor: Colors.transparent,
         ),
         body: _pages[_currentPageIndex.value],
         bottomNavigationBar: Obx(
