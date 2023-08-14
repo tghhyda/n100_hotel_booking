@@ -54,6 +54,7 @@ dependencies:
   google_sign_in_android: ^6.1.18
   flutter_date_range_picker: ^0.0.14
   another_carousel_pro: ^1.0.0
+  regexpattern: ^2.5.0
 
 dev_dependencies:
   flutter_test:

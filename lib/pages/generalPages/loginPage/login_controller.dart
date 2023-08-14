@@ -10,8 +10,8 @@ import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_home.dart';
-import 'package:n100_hotel_booking/pages/generalPages/component/divider_widget.dart';
-import 'package:n100_hotel_booking/pages/generalPages/component/square_tile_widget.dart';
+import 'package:n100_hotel_booking/pages/generalPages/components/divider_widget.dart';
+import 'package:n100_hotel_booking/pages/generalPages/components/square_tile_widget.dart';
 import 'package:n100_hotel_booking/pages/generalPages/forgotPasswordPage/forgot_password_controller.dart';
 import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_home.dart';

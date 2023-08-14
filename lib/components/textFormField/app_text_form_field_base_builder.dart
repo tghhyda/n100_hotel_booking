@@ -19,9 +19,15 @@ abstract class AppTextFormFieldBaseBuilder {
   String? Function(String? value)? _validator;
   void Function()? _onTapSuffixIcon;
   String? _initialValue;
+  int? _maxLine;
+  int? _minLine;
 
   AppTextFormFieldBaseBuilder setOnTapSuffixIcon(
       void Function() onTapSuffixIcon);
+
+  AppTextFormFieldBaseBuilder setMinLine(int minLine);
+
+  AppTextFormFieldBaseBuilder setMaxLine(int maxLine);
 
   AppTextFormFieldBaseBuilder setController(TextEditingController controller);
 

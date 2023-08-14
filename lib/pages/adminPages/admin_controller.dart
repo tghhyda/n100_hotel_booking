@@ -3,6 +3,10 @@ import 'package:get/get.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 
 class AdminController extends GetxController {
+
+  List<TypeRoomModel>? typeRoomList;
+  List<StatusRoomModel>? statusList;
+
   Future<List<RoomModel>> fetchRoomList() async {
     try {
       QuerySnapshot roomSnapshot =
@@ -67,11 +71,29 @@ class AdminController extends GetxController {
     }
   }
 
+  Future<void> addRoomToFirestore(RoomModel room) async {
+    try {
+      CollectionReference roomsCollection = FirebaseFirestore.instance.collection('rooms');
+      Map<String, dynamic> roomData = room.toJson();
+
+      await roomsCollection.add(roomData);
+
+      print('Room added successfully');
+    } catch (error) {
+      print('Error adding room: $error');
+      rethrow;
+    }
+  }
+
+
+
   @override
-  void onInit() {
+  void onInit() async{
     fetchRoomList();
     fetchConvenientList();
     fetchStatusList();
     fetchTypeRoomList();
+    typeRoomList = await fetchTypeRoomList();
+    statusList = await fetchStatusList();
   }
 }

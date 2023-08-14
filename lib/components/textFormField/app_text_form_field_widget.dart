@@ -28,15 +28,15 @@ class AppTextFormFieldWidget extends AppTextFormFieldBaseBuilder {
           top: 8.0,
         ),
         border: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black),
+          borderSide: const BorderSide(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black),
+          borderSide: const BorderSide(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black),
+          borderSide: const BorderSide(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
         ),
       ),
@@ -48,6 +48,8 @@ class AppTextFormFieldWidget extends AppTextFormFieldBaseBuilder {
       readOnly: _isReadOnly ?? false,
       autovalidateMode: _autoValidateMode,
       initialValue: _initialValue,
+      minLines: _minLine,
+      maxLines: _maxLine ?? 1,
     );
   }
 
@@ -134,6 +136,18 @@ class AppTextFormFieldWidget extends AppTextFormFieldBaseBuilder {
   @override
   AppTextFormFieldWidget setInitialValue(String initialValue) {
     _initialValue = initialValue;
+    return this;
+  }
+
+  @override
+  AppTextFormFieldBaseBuilder setMaxLine(int maxLine) {
+    _maxLine = maxLine;
+    return this;
+  }
+
+  @override
+  AppTextFormFieldBaseBuilder setMinLine(int minLine) {
+    _minLine = _minLine;
     return this;
   }
 }

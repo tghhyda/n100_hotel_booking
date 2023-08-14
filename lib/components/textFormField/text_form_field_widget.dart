@@ -80,11 +80,11 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
           top: 8.0,
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white),
+          borderSide: const BorderSide(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
         ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
         ),
       ),
