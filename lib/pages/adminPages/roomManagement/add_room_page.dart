@@ -485,10 +485,23 @@ class AddRoomPage extends GetView<AdminController> {
                             selectedStatusRoom?.value ??=
                                 controller.statusList?.first;
 
+                            // RoomModel room1 = RoomModel(
+                            //     idRoom,
+                            //     typeRoom,
+                            //     priceRoom,
+                            //     capacity,
+                            //     area,
+                            //     beds,
+                            //     quantity,
+                            //     statusRoom,
+                            //     convenient,
+                            //     review,
+                            //     images,
+                            //     description);
+
                             RoomModel room = RoomModel(
                                 generateRandomId(),
-                                selectedTypeRoom!.value ??
-                                    controller.typeRoomList!.first,
+                                selectedTypeRoom!.value!,
                                 int.parse(priceController.text),
                                 int.parse(capacityController.text),
                                 int.parse(areaController.text),
@@ -501,7 +514,7 @@ class AddRoomPage extends GetView<AdminController> {
                                 [],
                                 descriptionController.text);
                             _onUploadImages();
-                            controller.addRoomToFirestore(room);
+                            controller.postRoomDataToFirebase(room);
                           } catch (e) {
                             rethrow;
                           }

@@ -68,8 +68,8 @@ Map<String, dynamic> _$RoomModelToJson(RoomModel instance) => <String, dynamic>{
 
 TypeRoomModel _$TypeRoomModelFromJson(Map<String, dynamic> json) =>
     TypeRoomModel(
-      json['idTypeRoom'] as String,
-      json['nameTypeRoom'] as String,
+      json['idTypeRoom'] as String?,
+      json['nameTypeRoom'] as String?,
     );
 
 Map<String, dynamic> _$TypeRoomModelToJson(TypeRoomModel instance) =>

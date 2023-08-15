@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 
 class AdminController extends GetxController {
-
   List<TypeRoomModel>? typeRoomList;
   List<StatusRoomModel>? statusList;
 
@@ -71,24 +70,39 @@ class AdminController extends GetxController {
     }
   }
 
-  Future<void> addRoomToFirestore(RoomModel room) async {
+  Future<void> postRoomDataToFirebase(RoomModel roomModel) async {
     try {
-      CollectionReference roomsCollection = FirebaseFirestore.instance.collection('rooms');
-      Map<String, dynamic> roomData = room.toJson();
+      // Serialize RoomModel to a JSON map
+      Map<String, dynamic> roomJson = roomModel.toJson();
 
-      await roomsCollection.add(roomData);
+      // Chuyển đổi các đối tượng phức tạp thành các Map
+      Map<String, dynamic> typeRoomJson = roomJson['typeRoom'].toJson();
+      roomJson['typeRoom'] = typeRoomJson;
 
-      print('Room added successfully');
+      Map<String, dynamic> statusRoomJson = roomJson['statusRoom'].toJson();
+      roomJson['statusRoom'] = statusRoomJson;
+
+      List<Map<String, dynamic>> convenientsJson = [];
+      for (ConvenientModel? convenient in roomModel.convenient ?? []) {
+        convenientsJson.add(convenient!.toJson());
+      }
+      roomJson['convenient'] = convenientsJson;
+
+      await FirebaseFirestore.instance
+          .collection('rooms')
+          .doc(roomModel.idRoom)
+          .set(roomJson);
+
+      print('Room data posted to Firebase successfully');
     } catch (error) {
-      print('Error adding room: $error');
+      print('Error posting room data to Firebase: $error');
       rethrow;
     }
   }
 
 
-
   @override
-  void onInit() async{
+  void onInit() async {
     fetchRoomList();
     fetchConvenientList();
     fetchStatusList();
