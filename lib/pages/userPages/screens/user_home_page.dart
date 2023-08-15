@@ -15,6 +15,9 @@ class UserHomePage extends GetView<UserController> {
 
   @override
   final controller = Get.put(UserController());
+  dynamic roomCount;
+  dynamic adultCount;
+  dynamic childrenCount;
 
   @override
   Widget build(BuildContext context) {
@@ -28,103 +31,109 @@ class UserHomePage extends GetView<UserController> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: Form(
-              key: controller.formKey,
+                key: controller.formKey,
                 child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.of.grayColor[1],
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.of.grayColor[7]!.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.of.grayColor[1],
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.of.grayColor[7]!.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppTextFormFieldWidget()
-                      .setController(controller.selectedDatesController!)
-                      .setPrefixIcon(const Icon(Icons.date_range))
-                      .setHintText("Select check-in and check-out date")
-                      .setIsReadOnly(true)
-                      .setOnTap(() async {
-                    final DateTimeRange? dateTimeRange =
-                        await showDateRangePicker(
-                            context: context,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(3000));
-                    if (dateTimeRange != null) {
-                      controller.selectedDates?.value = dateTimeRange;
-                      final DateFormat formatter =
-                          DateFormat('dd/MM/yyyy');
-                      final String startDate = formatter
-                          .format(controller.selectedDates!.value.start);
-                      final String endDate = formatter
-                          .format(controller.selectedDates!.value.end);
-                      controller.selectedDatesController?.text =
-                          "$startDate - $endDate";
-                    }
-                  }).build(context),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Obx(
-                    () => AppTextBody1Widget()
-                        .setText(
-                            "${controller.selectedDates.value.duration.inDays} night(s) stay")
-                        .build(context),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  AppTextFormFieldWidget()
-                      .setController(controller.roomBookingController)
-                      .setPrefixIcon(const Icon(Icons.family_restroom))
-                      .setHintText("Room, Adult, Children")
-                      .setIsReadOnly(true)
-                      .setOnTap(() async {
-                    final result = await Get.to(() => SearchRoomDetail());
-                    if (result != null) {
-                      final roomCount = result['room'];
-                      final adultCount = result['theNumberOfAdult'];
-                      final childrenCount = result['children'];
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextFormFieldWidget()
+                          .setController(controller.selectedDatesController!)
+                          .setPrefixIcon(const Icon(Icons.date_range))
+                          .setHintText("Select check-in and check-out date")
+                          .setIsReadOnly(true)
+                          .setOnTap(() async {
+                        final DateTimeRange? dateTimeRange =
+                            await showDateRangePicker(
+                                context: context,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(3000));
+                        if (dateTimeRange != null) {
+                          controller.selectedDates?.value = dateTimeRange;
+                          final DateFormat formatter = DateFormat('dd/MM/yyyy');
+                          final String startDate = formatter
+                              .format(controller.selectedDates!.value.start);
+                          final String endDate = formatter
+                              .format(controller.selectedDates!.value.end);
+                          controller.selectedDatesController?.text =
+                              "$startDate - $endDate";
+                        }
+                      }).build(context),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Obx(
+                        () => AppTextBody1Widget()
+                            .setText(
+                                "${controller.selectedDates.value.duration.inDays} night(s) stay")
+                            .build(context),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      AppTextFormFieldWidget()
+                          .setController(controller.roomBookingController)
+                          .setPrefixIcon(const Icon(Icons.family_restroom))
+                          .setHintText("Room, Adult, Children")
+                          .setIsReadOnly(true)
+                          .setOnTap(() async {
+                        final result = await Get.to(() => SearchRoomDetail());
+                        if (result != null) {
+                          roomCount = result['room'];
+                          adultCount = result['theNumberOfAdult'];
+                          childrenCount = result['children'];
 
-                      controller.roomBookingController.text =
-                          'Room: $roomCount, Adult: $adultCount, Children: $childrenCount';
-                    }
-                  }).build(context),
-                  const SizedBox(
-                    height: 8,
+                          controller.roomBookingController.text =
+                              'Room: $roomCount, Adult: $adultCount, Children: $childrenCount';
+                        }
+                      }).build(context),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: AppColors.of.yellowColor[5],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: BorderSide(
+                                    width: 1,
+                                    color: AppColors.of.grayColor[10] ??
+                                        Colors
+                                            .black), // Thay đổi border radius ở đây
+                              ),
+                            ),
+                            onPressed: () {
+                              Get.to(
+                                () => FilterRoomListView(),
+                                // arguments: {
+                                //   'roomCount': roomCount,
+                                //   'adultCount': adultCount,
+                                //   'childrenCount': childrenCount
+                                // },
+                              );
+                            },
+                            child: AppTextBody1Widget()
+                                .setText("Search")
+                                .setTextStyle(AppTextStyleExt.of.textBody1s)
+                                .build(context)),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: AppColors.of.yellowColor[5],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            side: BorderSide(
-                                width: 1,
-                                color: AppColors.of.grayColor[10] ??
-                                    Colors
-                                        .black), // Thay đổi border radius ở đây
-                          ),
-                        ),
-                        onPressed: () {
-                          Get.to(()=> FilterRoomListView());
-                        },
-                        child: AppTextBody1Widget()
-                            .setText("Search")
-                            .setTextStyle(AppTextStyleExt.of.textBody1s)
-                            .build(context)),
-                  )
-                ],
-              ),
-            )),
+                )),
           ),
           RecommendedRooms().build(context)
         ],

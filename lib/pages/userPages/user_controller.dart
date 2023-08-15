@@ -20,53 +20,55 @@ class UserController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
-  List<RoomModel>? listRoomCapacity;
-
   Future<void> handleSignOut() async {
     await googleSignIn.signOut();
     await _auth.signOut();
     Get.off(LoginPage());
   }
 
-  Future<List<RoomModel>> searchRoomCapacity({
-    int numberOfRooms = 0,
-    int numberOfAdults = 0,
-    int numberOfChildren = 0,
-    StatusRoomModel? roomStatus,
+  Future<void> updateRoomCapacity({
+    required int numberOfRooms,
+    required int numberOfAdults,
+    required int numberOfChildren,
   }) async {
+    theNumberOfRooms!.value = numberOfRooms;
+    theNumberOfAdult!.value = numberOfAdults;
+    theNumberOfChildren!.value = numberOfChildren;
+  }
+
+  Future<List<RoomModel>> searchRoomCapacity({
+    required int numberOfRooms,
+    required int numberOfAdults,
+    required int numberOfChildren,
+  }) async {
+    List<RoomModel> roomList = [];
     try {
-      Query roomsQuery = FirebaseFirestore.instance.collection('rooms');
+      int totalCapacity = numberOfAdults + numberOfChildren;
 
-      if (numberOfRooms > 0) {
-        roomsQuery = roomsQuery.where('quantity', isEqualTo: numberOfRooms);
-      }
+      await updateRoomCapacity(
+        numberOfRooms: numberOfRooms,
+        numberOfAdults: numberOfAdults,
+        numberOfChildren: numberOfChildren,
+      );
 
-      if (numberOfAdults > 0) {
-        roomsQuery = roomsQuery.where('numberOfAdult',
-            isGreaterThanOrEqualTo: numberOfAdults);
-      }
+      // Query Firestore collection to filter rooms by capacity and quantity
+      QuerySnapshot capacityQuery = await FirebaseFirestore.instance
+          .collection('rooms') // Change to your collection name
+          .where('capacity', isGreaterThanOrEqualTo: totalCapacity)
+          .where('statusRoom.description', isEqualTo: 'Available')
+          .get();
 
-      if (numberOfChildren > 0) {
-        roomsQuery = roomsQuery.where('numberOfChildren',
-            isGreaterThanOrEqualTo: numberOfChildren);
-      }
+      // Use the results of capacity query to filter by quantity
+      roomList = capacityQuery.docs
+          .where((doc) => doc['quantity'] >= numberOfRooms)
+          .map((doc) => RoomModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
 
-      if (roomStatus != null) {
-        roomsQuery =
-            roomsQuery.where('statusRoom.description', isEqualTo: 'Available');
-      }
-
-      QuerySnapshot roomSnapshot = await roomsQuery.get();
-
-      List<RoomModel> rooms = roomSnapshot.docs.map((doc) {
-        RoomModel room = RoomModel.fromJson(doc.data() as Map<String, dynamic>);
-        return room;
-      }).toList();
-
-      return rooms;
+      return roomList;
     } catch (e) {
       print("Error searching rooms: $e");
       return [];
+      // rethrow;
     }
   }
 
@@ -81,6 +83,29 @@ class UserController extends GetxController {
 
     return rooms;
   }
+
+  Future<List<RoomModel>?> filterRoomsByName(String roomName) async {
+    if (roomName.isEmpty) {
+      return searchRoomCapacity(
+        numberOfRooms: theNumberOfRooms!.value,
+        numberOfAdults: theNumberOfAdult!.value,
+        numberOfChildren: theNumberOfChildren!.value,
+      );
+    } else {
+      List<RoomModel>? filteredRooms = await searchRoomCapacity(
+        numberOfRooms: theNumberOfRooms!.value,
+        numberOfAdults: theNumberOfAdult!.value,
+        numberOfChildren: theNumberOfChildren!.value,
+      );
+
+      return filteredRooms.where((room) {
+        return room.typeRoom.nameTypeRoom!
+            .toLowerCase()
+            .contains(roomName.toLowerCase());
+      }).toList();
+    }
+  }
+
 
   double getRating(RoomModel roomModel) {
     double rating = 5;
@@ -97,7 +122,6 @@ class UserController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    listRoomCapacity = await searchRoomCapacity();
     fetchRoomList();
   }
 }

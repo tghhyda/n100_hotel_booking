@@ -12,6 +12,8 @@ class FilterRoomListView extends GetView<UserController> {
   @override
   final controller = Get.put(UserController());
 
+  TextEditingController searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,19 +43,52 @@ class FilterRoomListView extends GetView<UserController> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Row(),
+            TextField(
+              controller: searchController, // Đặt controller
+              decoration: InputDecoration(
+                labelText: 'Search by room name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: AppColors.of.yellowColor[5],
+                ),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    searchController.clear();
+                    controller.filterRoomsByName('');
+                  },
+                ),
+              ),
+              onChanged: (value) {
+                print("Searching for: $value");
+                controller.filterRoomsByName(value);
+              },
+            ),
+            const SizedBox(
+              height: 8,
+            ),
             Expanded(
-              child: GetBuilder<UserController>(
-                builder: (controller) {
-                  final List<RoomModel>? filteredRooms =
-                      controller.listRoomCapacity;
-                  if (filteredRooms!.isEmpty) {
+              child: FutureBuilder<List<RoomModel>>(
+                future: controller.searchRoomCapacity(
+                  numberOfRooms: controller.theNumberOfRooms!.value,
+                  numberOfAdults: controller.theNumberOfAdult!.value,
+                  numberOfChildren: controller.theNumberOfChildren!.value,
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
-                      child: Text("No rooms match the search criteria."),
-                    );
+                        child: Text("No rooms match the search criteria."));
                   } else {
+                    final List<RoomModel> filteredRooms = snapshot.data!;
                     return ListView.builder(
-                      itemCount: filteredRooms?.length,
+                      itemCount: filteredRooms.length,
                       itemBuilder: (context, index) {
                         final RoomModel room = filteredRooms[index];
                         return Container(
@@ -132,7 +167,9 @@ class FilterRoomListView extends GetView<UserController> {
                                       .setTextOverFlow(TextOverflow.ellipsis)
                                       .setColor(AppColors.of.grayColor[7])
                                       .build(context),
-                                  const SizedBox(height: 8,),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
                                   AppTextSubTitle1Widget()
                                       .setText("${room.priceRoom} VND / Night")
                                       .build(context),
