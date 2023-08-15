@@ -143,7 +143,7 @@ ReviewModel _$ReviewModelFromJson(Map<String, dynamic> json) => ReviewModel(
       json['room'] as String,
       json['timeReview'] as String,
       json['detailReview'] as String,
-      json['rate'] as int,
+      (json['rate'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$ReviewModelToJson(ReviewModel instance) =>

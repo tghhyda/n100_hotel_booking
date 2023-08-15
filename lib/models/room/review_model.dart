@@ -7,7 +7,7 @@ class ReviewModel {
   final String room;
   final String timeReview;
   final String detailReview;
-  final int rate;
+  final double rate;
 
   ReviewModel(this.idReview, this.user, this.room, this.timeReview,
       this.detailReview, this.rate);

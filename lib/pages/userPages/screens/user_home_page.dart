@@ -7,7 +7,8 @@ import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/pages/userPages/components/image_slider_widget.dart';
 import 'package:n100_hotel_booking/pages/userPages/components/recommended_rooms.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
-import 'package:n100_hotel_booking/pages/userPages/views/search_room_detail.dart';
+import 'package:n100_hotel_booking/pages/userPages/views/filter_room_list_view.dart';
+import 'package:n100_hotel_booking/pages/userPages/views/search_room_detail_view.dart';
 
 class UserHomePage extends GetView<UserController> {
   UserHomePage({super.key});
@@ -113,7 +114,9 @@ class UserHomePage extends GetView<UserController> {
                                         .black), // Thay đổi border radius ở đây
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.to(()=> FilterRoomListView());
+                        },
                         child: AppTextBody1Widget()
                             .setText("Search")
                             .setTextStyle(AppTextStyleExt.of.textBody1s)
