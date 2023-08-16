@@ -72,6 +72,31 @@ class UserController extends GetxController {
     }
   }
 
+  Future<List<RoomModel>> filterByName(String roomName) async {
+    List<RoomModel> roomList = [];
+
+    try {
+      List<RoomModel> capacityFilteredRooms = await searchRoomCapacity(
+        numberOfRooms: theNumberOfRooms!.value,
+        numberOfAdults: theNumberOfAdult!.value,
+        numberOfChildren: theNumberOfChildren!.value,
+      );
+
+      roomList = capacityFilteredRooms
+          .where((room) =>
+          room.typeRoom.nameTypeRoom!
+              .toLowerCase()
+              .contains(roomName.toLowerCase()))
+          .toList();
+
+      return roomList;
+    } catch (e) {
+      print("Error filtering rooms by name: $e");
+      return [];
+      // rethrow;
+    }
+  }
+
   Future<List<RoomModel>> fetchRoomList() async {
     QuerySnapshot roomSnapshot =
         await FirebaseFirestore.instance.collection('rooms').get();
@@ -82,28 +107,6 @@ class UserController extends GetxController {
     }).toList();
 
     return rooms;
-  }
-
-  Future<List<RoomModel>?> filterRoomsByName(String roomName) async {
-    if (roomName.isEmpty) {
-      return searchRoomCapacity(
-        numberOfRooms: theNumberOfRooms!.value,
-        numberOfAdults: theNumberOfAdult!.value,
-        numberOfChildren: theNumberOfChildren!.value,
-      );
-    } else {
-      List<RoomModel>? filteredRooms = await searchRoomCapacity(
-        numberOfRooms: theNumberOfRooms!.value,
-        numberOfAdults: theNumberOfAdult!.value,
-        numberOfChildren: theNumberOfChildren!.value,
-      );
-
-      return filteredRooms.where((room) {
-        return room.typeRoom.nameTypeRoom!
-            .toLowerCase()
-            .contains(roomName.toLowerCase());
-      }).toList();
-    }
   }
 
 

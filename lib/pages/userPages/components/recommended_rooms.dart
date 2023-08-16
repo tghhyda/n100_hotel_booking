@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:n100_hotel_booking/components/button/app_button_base_builder.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
-import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 
@@ -63,19 +62,22 @@ class RecommendedRooms extends GetView<UserController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            room.images!.isNotEmpty
-                                ? Image.network(
-                                    room.images![0]!,
-                                    width: 150,
-                                    height: 150,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.asset(
-                                    'assets/adsImage/room2.png',
-                                    width: 150,
-                                    height: 150,
-                                    fit: BoxFit.cover,
-                                  ),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: room.images!.isNotEmpty
+                                  ? Image.network(
+                                room.images![0]!,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              )
+                                  : Image.asset(
+                                'assets/adsImage/room4.png',
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             const SizedBox(
                               height: 4,
                             ),

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -21,7 +22,7 @@ class UserHome extends GetView<UserController> {
     return Scaffold(
         backgroundColor: AppColorsExt.backgroundColor,
         appBar: AppBar(
-          title: const Text('User'),
+          title: Text('${FirebaseAuth.instance.currentUser?.displayName}'),
           backgroundColor: AppColorsExt.backgroundColor,
           elevation: 1,
           actions: [

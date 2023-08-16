@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_controller.dart';
-import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_page.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();

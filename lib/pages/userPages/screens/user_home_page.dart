@@ -119,11 +119,6 @@ class UserHomePage extends GetView<UserController> {
                             onPressed: () {
                               Get.to(
                                 () => FilterRoomListView(),
-                                // arguments: {
-                                //   'roomCount': roomCount,
-                                //   'adultCount': adultCount,
-                                //   'childrenCount': childrenCount
-                                // },
                               );
                             },
                             child: AppTextBody1Widget()
