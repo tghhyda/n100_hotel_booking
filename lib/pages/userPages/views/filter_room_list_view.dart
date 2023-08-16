@@ -97,7 +97,7 @@ class FilterRoomListView extends GetView<UserController> {
                               child: InkWell(
                                 onTap: () {
                                   Get.to(
-                                    () => const RoomDetailPage(),
+                                    () =>  RoomDetailPage(),
                                     arguments:
                                         room, // Pass your RoomModel object here
                                   );
