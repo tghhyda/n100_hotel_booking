@@ -14,10 +14,10 @@ class RoomDetailPage extends GetView<UserController> {
   Widget build(BuildContext context) {
     final RoomModel room = Get.arguments;
 
-    return DefaultTabController(
-      length: 3, // Số lượng tab
-      child: Scaffold(
-        body: CustomScrollView(
+    return Scaffold(
+      body: DefaultTabController(
+        length: 3, // Số lượng tab
+        child: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
               iconTheme: const IconThemeData(color: Colors.black),
@@ -30,13 +30,13 @@ class RoomDetailPage extends GetView<UserController> {
               flexibleSpace: FlexibleSpaceBar(
                 background: room.images!.isNotEmpty
                     ? Image.network(
-                        room.images![0]!,
-                        fit: BoxFit.cover,
-                      )
+                  room.images![0]!,
+                  fit: BoxFit.cover,
+                )
                     : Image.asset(
-                        'assets/adsImage/room4.png',
-                        fit: BoxFit.cover,
-                      ),
+                  'assets/adsImage/room4.png',
+                  fit: BoxFit.cover,
+                ),
                 titlePadding: const EdgeInsets.only(left: 10, bottom: 10),
                 title: Row(
                   children: [
@@ -61,18 +61,16 @@ class RoomDetailPage extends GetView<UserController> {
               ),
               pinned: true,
             ),
-            SliverToBoxAdapter(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TabBar(
-                    tabs: [
-                      Tab(text: 'Review (${room.review?.length})'),
-                      Tab(text: 'Photo (${room.images?.length})'),
-                      const Tab(text: 'Description'),
-                    ],
-                  ),
-                ],
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                  tabs: [
+                    Tab(text: 'Review (${room.review?.length})'),
+                    Tab(text: 'Photo (${room.images?.length})'),
+                    const Tab(text: 'Description'),
+                  ],
+                ),
               ),
             ),
             SliverFillRemaining(
@@ -91,50 +89,76 @@ class RoomDetailPage extends GetView<UserController> {
                   // Nội dung cho tab Description
                   RoomDetailDescriptionView(
                     bodyDescription: Text(room.description),
-                    listConvenient: room.convenient,
+                    roomModel: room,
                   ),
                 ],
               ),
             ),
           ],
         ),
-        bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-                // color: Colors.redAccent,
-                border: Border.all(width: 1, color: Colors.grey)),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AppTextBody1Widget()
-                          .setText('${room.priceRoom} VND')
-                          .build(context),
-                      AppTextBody1Widget().setText('AVG/NIGHT').build(context),
-                    ],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 1, color: Colors.grey),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppTextBody1Widget()
+                      .setText('${room.priceRoom} VND')
+                      .build(context),
+                  AppTextBody1Widget().setText('AVG/NIGHT').build(context),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.lime, Colors.amber],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.lime, Colors.amber],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: AppTextButtonWidget()
-                        .setButtonText("BOOKING NOW")
-                        .setOnPressed(() {})
-                        .build(context),
-                  ),
-                )
-              ],
-            )),
+                child: AppTextButtonWidget()
+                    .setButtonText("BOOKING NOW")
+                    .setOnPressed(() {})
+                    .build(context),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
+  }
+}
+

@@ -10,14 +10,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 class RoomDetailDescriptionView extends StatelessWidget {
   const RoomDetailDescriptionView(
-      {super.key, required this.bodyDescription, required this.listConvenient});
+      {super.key, required this.bodyDescription, required this.roomModel});
 
   final Widget? bodyDescription;
-  final List<ConvenientModel?>? listConvenient;
+  final RoomModel roomModel;
 
   List<Widget> _convertConvenient2Widget() {
     List<Widget> list = [];
-    listConvenient?.forEach((element) {
+    roomModel.convenient?.forEach((element) {
       list.add(Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -100,7 +100,7 @@ class RoomDetailDescriptionView extends StatelessWidget {
                   height: 8,
                 ),
                 StaggeredGrid.count(
-                  crossAxisCount: 3,
+                  crossAxisCount: 2,
                   mainAxisSpacing: 12,
                   children: _convertConvenient2Widget(),
                 )
@@ -113,7 +113,12 @@ class RoomDetailDescriptionView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                AppTextBody1Widget()
+                    .setText("CONTACT US")
+                    .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .build(context),
                 Row(
                   children: [
                     const Icon(
@@ -154,7 +159,8 @@ class RoomDetailDescriptionView extends StatelessWidget {
                     AppTooltipWidget()
                         .setIcon(const Icon(Icons.info_outline_rounded))
                         .setPreferredDirection(AxisDirection.down)
-                        .setText("Call to schedule check-in and check-out times")
+                        .setText(
+                            "Call to schedule check-in and check-out times")
                         .build(context)
                   ],
                 ),
@@ -163,19 +169,84 @@ class RoomDetailDescriptionView extends StatelessWidget {
           ),
           const Divider(),
           Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                AppTextBody1Widget()
+                    .setText("OTHER INFORMATION")
+                    .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .build(context),
+                StaggeredGrid.count(
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 12,
+                  crossAxisCount: 2,
                   children: [
-
+                    _buildRoomAttribute(
+                        context,
+                        "Area room",
+                        "${roomModel.area} m2",
+                        const ImageIcon(
+                            AssetImage(
+                                'assets/roomAttributes/room_area_icon.png'),
+                            size: 45.0,
+                            color: Colors.blue)),
+                    _buildRoomAttribute(
+                        context,
+                        "Capacity room",
+                        "${roomModel.capacity} people",
+                        const ImageIcon(
+                            AssetImage(
+                                'assets/roomAttributes/room_capacity_icon.png'),
+                            size: 45.0,
+                            color: Colors.blue)),
+                    _buildRoomAttribute(
+                        context,
+                        "Quantity bed",
+                        "${roomModel.beds} beds",
+                        const ImageIcon(
+                            AssetImage('assets/roomAttributes/room_bed_icon.png'),
+                            size: 45.0,
+                            color: Colors.blue)),
+                    _buildRoomAttribute(
+                        context,
+                        "Quantity room",
+                        "${roomModel.quantity} rooms",
+                        const ImageIcon(
+                            AssetImage(
+                                'assets/roomAttributes/room_quantity_icon.png'),
+                            size: 45.0,
+                            color: Colors.blue))
                   ],
                 ),
-                Row()
               ],
             ),
-          )
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRoomAttribute(
+      BuildContext context, String title, String content, ImageIcon icon) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        icon,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            AppTextBody1Widget()
+                .setText(title)
+                .setColor(Colors.blue)
+                .build(context),
+            AppTextBody1Widget()
+                .setText(content)
+                .setColor(AppColors.of.grayColor[10])
+                .build(context),
+          ],
+        )
+      ],
     );
   }
 }
