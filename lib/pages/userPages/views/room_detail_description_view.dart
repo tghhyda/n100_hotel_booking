@@ -210,7 +210,7 @@ class RoomDetailDescriptionView extends StatelessWidget {
                             color: Colors.blue)),
                     _buildRoomAttribute(
                         context,
-                        "Quantity room",
+                        "Available room",
                         "${roomModel.quantity} rooms",
                         const ImageIcon(
                             AssetImage(

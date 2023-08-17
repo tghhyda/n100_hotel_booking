@@ -18,95 +18,100 @@ class RoomDetailReviewView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppTextBody1Widget()
-                    .setText("Rate this room")
-                    .setTextStyle(AppTextStyleExt.of.textBody1s)
-                    .build(context),
-                AppTextSubTitle1Widget()
-                    .setText("Let others know what you think")
-                    .setColor(AppColors.of.grayColor[7])
-                    .build(context),
-                const SizedBox(
-                  height: 8,
-                ),
-                Obx(
-                  () => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      for (int i = 1; i <= 5; i++)
-                        GestureDetector(
-                          onTap: () {
-                            controller.rating?.value = i;
-                            Get.to(RoomPostReviewView(), arguments: roomModel);
-                          },
-                          child: Icon(
-                            i <= controller.rating!.value
-                                ? Icons.star
-                                : Icons.star_outline,
-                            size: 35,
-                            color: i <= controller.rating!.value
-                                ? Colors.orange
-                                : Colors.grey,
-                          ),
-                        ),
-                    ],
+    return RefreshIndicator(
+      onRefresh: () async{
+        await controller.getListReviewsForRoom(roomModel.idRoom);
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppTextBody1Widget()
+                      .setText("Rate this room")
+                      .setTextStyle(AppTextStyleExt.of.textBody1s)
+                      .build(context),
+                  AppTextSubTitle1Widget()
+                      .setText("Let others know what you think")
+                      .setColor(AppColors.of.grayColor[7])
+                      .build(context),
+                  const SizedBox(
+                    height: 8,
                   ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                AppTextButtonWidget()
-                    .setButtonText("Write a review")
-                    .setOnPressed(() {
-                  Get.to(RoomPostReviewView(), arguments: roomModel);
-                }).build(context)
-              ],
+                  Obx(
+                    () => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        for (int i = 1; i <= 5; i++)
+                          GestureDetector(
+                            onTap: () {
+                              controller.rating?.value = i;
+                              Get.to(RoomPostReviewView(), arguments: roomModel);
+                            },
+                            child: Icon(
+                              i <= controller.rating!.value
+                                  ? Icons.star
+                                  : Icons.star_outline,
+                              size: 35,
+                              color: i <= controller.rating!.value
+                                  ? Colors.orange
+                                  : Colors.grey,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  AppTextButtonWidget()
+                      .setButtonText("Write a review")
+                      .setOnPressed(() {
+                    Get.to(RoomPostReviewView(), arguments: roomModel);
+                  }).build(context)
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric( horizontal: 16),
-            child: AppTextBody1Widget()
-                .setText("Rating and reviews")
-                .setTextStyle(AppTextStyleExt.of.textBody1s)
-                .build(context),
-          ),
-          for (int i = 5; i >= 1; i--) _buildReviewRow(i),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            child: FutureBuilder<List<ReviewModel>>(
-              future: controller.getListReviewsForRoom(roomModel.idRoom),
-              // Gọi hàm để lấy danh sách review
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Hiển thị biểu tượng chờ khi đang tải dữ liệu
-                } else if (snapshot.hasError) {
-                  return Text(
-                      'Error: ${snapshot.error}'); // Hiển thị thông báo lỗi nếu có lỗi xảy ra
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text(
-                      'No reviews available'); // Hiển thị thông báo khi không có review
-                } else {
-                  List<ReviewModel> reviews = snapshot.data!;
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (var review in reviews) _buildReviewItem(review),
-                    ],
-                  );
-                }
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric( horizontal: 16),
+              child: AppTextBody1Widget()
+                  .setText("Rating and reviews")
+                  .setTextStyle(AppTextStyleExt.of.textBody1s)
+                  .build(context),
             ),
-          ),
-        ],
+            for (int i = 5; i >= 1; i--) _buildReviewRow(i),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              child: FutureBuilder<List<ReviewModel>>(
+                future: controller.getListReviewsForRoom(roomModel.idRoom),
+                // Gọi hàm để lấy danh sách review
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(); // Hiển thị biểu tượng chờ khi đang tải dữ liệu
+                  } else if (snapshot.hasError) {
+                    return Text(
+                        'Error: ${snapshot.error}'); // Hiển thị thông báo lỗi nếu có lỗi xảy ra
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Text(
+                        'No reviews available'); // Hiển thị thông báo khi không có review
+                  } else {
+                    List<ReviewModel> reviews = snapshot.data!;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (var review in reviews) _buildReviewItem(review),
+                      ],
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

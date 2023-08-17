@@ -21,90 +21,86 @@ class RoomDetailPage extends GetView<UserController> {
     final RoomModel room = Get.arguments;
     int numberOfPhoto = room.images!.isEmpty ? 4 : room.images!.length;
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-        },
-        child: DefaultTabController(
-          length: 3, // Số lượng tab
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                iconTheme: const IconThemeData(color: Colors.black),
-                expandedHeight: 200,
-                title: AppTextBody1Widget()
-                    .setText("${room.typeRoom.nameTypeRoom}")
-                    .setTextStyle(AppTextStyleExt.of.textBody1s)
-                    .setColor(AppColors.of.grayColor[10])
-                    .build(context),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: room.images!.isNotEmpty
-                      ? Image.network(
-                          room.images![0]!,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset(
-                          'assets/adsImage/room4.png',
-                          fit: BoxFit.cover,
-                        ),
-                  titlePadding: const EdgeInsets.only(left: 10, bottom: 10),
-                  title: Row(
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: AppColors.of.yellowColor[5],
-                        size: 20,
+      body: DefaultTabController(
+        length: 3, // Số lượng tab
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              iconTheme: const IconThemeData(color: Colors.black),
+              expandedHeight: 200,
+              title: AppTextBody1Widget()
+                  .setText("${room.typeRoom.nameTypeRoom}")
+                  .setTextStyle(AppTextStyleExt.of.textBody1s)
+                  .setColor(AppColors.of.grayColor[10])
+                  .build(context),
+              flexibleSpace: FlexibleSpaceBar(
+                background: room.images!.isNotEmpty
+                    ? Image.network(
+                        room.images![0]!,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/adsImage/room4.png',
+                        fit: BoxFit.cover,
                       ),
-                      AppTextSubTitle1Widget()
-                          .setText(
-                              '${(controller.getRating(room) * 2).round() / 2}')
-                          .setColor(AppColors.of.grayColor[1])
-                          .build(context),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                      AppTextSubTitle1Widget()
-                          .setText('${room.review?.length} reviews')
-                          .setColor(AppColors.of.grayColor[1])
-                          .build(context),
-                    ],
-                  ),
-                ),
-                pinned: true,
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverAppBarDelegate(
-                  TabBar(
-                    tabs: [
-                      Tab(text: 'Reviews (${room.review?.length})'),
-                      Tab(text: 'Photos ($numberOfPhoto)'),
-                      const Tab(text: 'Description'),
-                    ],
-                  ),
-                ),
-              ),
-              SliverFillRemaining(
-                child: TabBarView(
+                titlePadding: const EdgeInsets.only(left: 10, bottom: 10),
+                title: Row(
                   children: [
-                    // Nội dung cho tab Review
-                    RoomDetailReviewView(roomModel: room),
-                    // Nội dung cho tab Photo
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: RoomDetailPhotoView(
-                        listImage: room.images,
-                      ),
+                    Icon(
+                      Icons.star,
+                      color: AppColors.of.yellowColor[5],
+                      size: 20,
                     ),
-                    // Nội dung cho tab Description
-                    RoomDetailDescriptionView(
-                      bodyDescription: Text(room.description),
-                      roomModel: room,
+                    AppTextSubTitle1Widget()
+                        .setText(
+                            '${(controller.getRating(room) * 2).round() / 2}')
+                        .setColor(AppColors.of.grayColor[1])
+                        .build(context),
+                    const SizedBox(
+                      width: 12,
                     ),
+                    AppTextSubTitle1Widget()
+                        .setText('${room.review?.length} reviews')
+                        .setColor(AppColors.of.grayColor[1])
+                        .build(context),
                   ],
                 ),
               ),
-            ],
-          ),
+              pinned: true,
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                  tabs: [
+                    Tab(text: 'Reviews (${room.review?.length})'),
+                    Tab(text: 'Photos ($numberOfPhoto)'),
+                    const Tab(text: 'Description'),
+                  ],
+                ),
+              ),
+            ),
+            SliverFillRemaining(
+              child: TabBarView(
+                children: [
+                  // Nội dung cho tab Review
+                  RoomDetailReviewView(roomModel: room),
+                  // Nội dung cho tab Photo
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: RoomDetailPhotoView(
+                      listImage: room.images,
+                    ),
+                  ),
+                  // Nội dung cho tab Description
+                  RoomDetailDescriptionView(
+                    bodyDescription: Text(room.description),
+                    roomModel: room,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: Container(
