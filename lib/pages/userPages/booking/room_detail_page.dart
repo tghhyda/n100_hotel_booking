@@ -11,7 +11,7 @@ import 'package:n100_hotel_booking/pages/userPages/views/room_detail_review_view
 import '../views/room_detail_photo_view.dart';
 
 class RoomDetailPage extends GetView<UserController> {
-   RoomDetailPage({super.key});
+  RoomDetailPage({super.key});
 
   @override
   final controller = Get.put(UserController());
@@ -23,7 +23,6 @@ class RoomDetailPage extends GetView<UserController> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          // await update();
         },
         child: DefaultTabController(
           length: 3, // Số lượng tab
@@ -56,14 +55,15 @@ class RoomDetailPage extends GetView<UserController> {
                         size: 20,
                       ),
                       AppTextSubTitle1Widget()
-                          .setText('${controller.getRating(room)}')
+                          .setText(
+                              '${(controller.getRating(room) * 2).round() / 2}')
                           .setColor(AppColors.of.grayColor[1])
                           .build(context),
                       const SizedBox(
                         width: 12,
                       ),
                       AppTextSubTitle1Widget()
-                          .setText('${room.review?.length} people reviewed')
+                          .setText('${room.review?.length} reviews')
                           .setColor(AppColors.of.grayColor[1])
                           .build(context),
                     ],
@@ -87,7 +87,7 @@ class RoomDetailPage extends GetView<UserController> {
                 child: TabBarView(
                   children: [
                     // Nội dung cho tab Review
-                    RoomDetailReviewView(listReview: room!.review),
+                    RoomDetailReviewView(roomModel: room),
                     // Nội dung cho tab Photo
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:n100_hotel_booking/config/app_theme.dart';
 
 part 'app_text_form_field_widget.dart';
+part 'app_outline_text_form_field_widget.dart';
 
 abstract class AppTextFormFieldBaseBuilder {
   late final TextEditingController _controller;
@@ -21,6 +20,11 @@ abstract class AppTextFormFieldBaseBuilder {
   String? _initialValue;
   int? _maxLine;
   int? _minLine;
+  int? _maxLength;
+
+  AppTextFormFieldBaseBuilder setMaxLength(int maxLength){
+    return this;
+  }
 
   AppTextFormFieldBaseBuilder setOnTapSuffixIcon(
       void Function() onTapSuffixIcon);
@@ -33,7 +37,7 @@ abstract class AppTextFormFieldBaseBuilder {
 
   AppTextFormFieldBaseBuilder setHintText(String hintText);
 
-  AppTextFormFieldWidget setInitialValue(String initialValue);
+  AppTextFormFieldBaseBuilder setInitialValue(String initialValue);
 
   AppTextFormFieldBaseBuilder setOnTap(void Function()? onTap);
 

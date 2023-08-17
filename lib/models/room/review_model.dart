@@ -5,7 +5,7 @@ class ReviewModel {
   final String idReview;
   final String user;
   final String room;
-  final String timeReview;
+  final DateTime timeReview;
   final String detailReview;
   final double rate;
 

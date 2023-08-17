@@ -141,7 +141,7 @@ ReviewModel _$ReviewModelFromJson(Map<String, dynamic> json) => ReviewModel(
       json['idReview'] as String,
       json['user'] as String,
       json['room'] as String,
-      json['timeReview'] as String,
+      DateTime.parse(json['timeReview'] as String),
       json['detailReview'] as String,
       (json['rate'] as num).toDouble(),
     );
@@ -151,7 +151,7 @@ Map<String, dynamic> _$ReviewModelToJson(ReviewModel instance) =>
       'idReview': instance.idReview,
       'user': instance.user,
       'room': instance.room,
-      'timeReview': instance.timeReview,
+      'timeReview': instance.timeReview.toIso8601String(),
       'detailReview': instance.detailReview,
       'rate': instance.rate,
     };

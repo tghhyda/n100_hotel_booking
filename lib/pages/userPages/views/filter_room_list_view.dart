@@ -97,7 +97,7 @@ class FilterRoomListView extends GetView<UserController> {
                               child: InkWell(
                                 onTap: () {
                                   Get.to(
-                                    () =>  RoomDetailPage(),
+                                    () => RoomDetailPage(),
                                     arguments:
                                         room, // Pass your RoomModel object here
                                   );
@@ -167,7 +167,7 @@ class FilterRoomListView extends GetView<UserController> {
                                                 ),
                                                 AppTextSubTitle1Widget()
                                                     .setText(
-                                                        '${controller.getRating(room)}')
+                                                        '${(controller.getRating(room) * 2).round() / 2}')
                                                     .setColor(AppColors
                                                         .of.grayColor[6])
                                                     .build(context),
@@ -182,20 +182,14 @@ class FilterRoomListView extends GetView<UserController> {
                                                     .build(context)
                                               ],
                                             ),
-                                            Text(
-                                              '${room.description}',
-                                              style: TextStyle(
-                                                  overflow:
-                                                      TextOverflow.ellipsis),
-                                            ),
-                                            // AppTextSubTitle1Widget()
-                                            //     .setText(room.description)
-                                            //     .setMaxLines(3)
-                                            //     .setTextOverFlow(
-                                            //         TextOverflow.ellipsis)
-                                            //     .setColor(
-                                            //         AppColors.of.grayColor[7])
-                                            //     .build(context),
+                                            AppTextSubTitle1Widget()
+                                                .setText(room.description)
+                                                .setMaxLines(3)
+                                                .setTextOverFlow(
+                                                    TextOverflow.ellipsis)
+                                                .setColor(
+                                                    AppColors.of.grayColor[7])
+                                                .build(context),
                                             const SizedBox(
                                               height: 8,
                                             ),

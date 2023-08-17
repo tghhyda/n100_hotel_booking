@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dart';
+import 'package:n100_hotel_booking/components/snackBar/app_snack_bar_base_builder.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_controller.dart';
 
@@ -14,11 +18,101 @@ class UserController extends GetxController {
   RxInt? theNumberOfRooms = 0.obs;
   RxInt? theNumberOfAdult = 0.obs;
   RxInt? theNumberOfChildren = 0.obs;
+  UserModel? currentUser;
+  RxInt? rating = 0.obs;
+  String? roomId;
 
   final formKey = GlobalKey<FormState>();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  String generateRandomId() {
+    var random = Random();
+    var timeInMillis = DateTime.now().millisecondsSinceEpoch;
+    var randomData = List<int>.generate(8, (_) => random.nextInt(256));
+
+    var id = '$timeInMillis${randomData.join('')}';
+    return id;
+  }
+
+  Future<List<ReviewModel>> getListReviewsForRoom(String roomId) async {
+    final CollectionReference reviewsCollection =
+    FirebaseFirestore.instance.collection('reviews');
+
+    final QuerySnapshot querySnapshot =
+    await reviewsCollection.where('room', isEqualTo: roomId).get();
+
+    final List<ReviewModel> reviews = querySnapshot.docs
+        .map((doc) => ReviewModel.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+
+    return reviews;
+  }
+
+  Future<void> postReviewAndUpdateRoomModel(
+      ReviewModel review, RoomModel room) async {
+    try {
+      final CollectionReference reviewsCollection =
+      FirebaseFirestore.instance.collection('reviews');
+      final DocumentReference roomRef =
+      FirebaseFirestore.instance.collection('rooms').doc(room.idRoom);
+
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        // Add the new review to the 'reviews' collection
+        await reviewsCollection.add(review.toJson());
+
+        // Get the current reviews list from the RoomModel
+        final currentReviews = room.review ?? [];
+
+        // Append the new review to the existing list of reviews
+        currentReviews.add(review);
+
+        // Update the 'review' field in the RoomModel with the updated reviews list
+        transaction.update(roomRef, {
+          'review': currentReviews.map((r) => r?.toJson()).toList(),
+        });
+      });
+      print('Review posted and RoomModel updated successfully');
+    } catch (e) {
+      AppDefaultDialogWidget()
+          .setIsHaveCloseIcon(true)
+          .setContent("Post review fail")
+          .setAppDialogType(AppDialogType.error)
+          .buildDialog(Get.context!)
+          .show();
+
+      print('Failed to post review and update RoomModel: $e');
+      rethrow;
+    }
+  }
+
+
+  Future<UserModel> getCurrentUserInfoByEmail(String email) async {
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('users').doc(email).get();
+
+    if (snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      UserModel user = UserModel.fromJson(data);
+      return user;
+    } else {
+      throw Exception('User not found');
+    }
+  }
+
+  Future<RoomModel> getRoomById(String id) async {
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('rooms').doc(id).get();
+
+    if (snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      RoomModel roomModel = RoomModel.fromJson(data);
+      return roomModel;
+    } else {
+      throw Exception('Room not found');
+    }
+  }
 
   Future<void> handleSignOut() async {
     await googleSignIn.signOut();
@@ -83,8 +177,7 @@ class UserController extends GetxController {
       );
 
       roomList = capacityFilteredRooms
-          .where((room) =>
-          room.typeRoom.nameTypeRoom!
+          .where((room) => room.typeRoom.nameTypeRoom!
               .toLowerCase()
               .contains(roomName.toLowerCase()))
           .toList();
@@ -109,7 +202,6 @@ class UserController extends GetxController {
     return rooms;
   }
 
-
   double getRating(RoomModel roomModel) {
     double rating = 5;
     if (roomModel.review!.isNotEmpty) {
@@ -125,6 +217,9 @@ class UserController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    currentUser = await getCurrentUserInfoByEmail(
+        FirebaseAuth.instance.currentUser!.email!);
+    print("${currentUser?.nameUser} aaaaaaaaaaaaaaaaaaa");
     fetchRoomList();
   }
 }
