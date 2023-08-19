@@ -130,8 +130,8 @@ class FilterRoomListView extends GetView<UserController> {
                                             ? Image.network(
                                                 room.images![0]!,
                                                 // Thay thế bằng URL hình ảnh thực tế của phòng
-                                                width: 80,
-                                                height: 100,
+                                                width: 100,
+                                                height: 120,
                                                 fit: BoxFit.cover,
                                               )
                                             : Image.asset(

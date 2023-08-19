@@ -14,7 +14,6 @@ class CanceledView extends GetView<HistoryController> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<BookingModel>>(
       future: controller.fetchCancelBookings(),
-      // Hàm này cần được định nghĩa trong HistoryController
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());

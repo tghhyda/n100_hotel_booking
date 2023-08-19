@@ -9,7 +9,7 @@ class RoomModel {
   final int capacity;
   final int area;
   final int beds;
-  final int quantity;
+  late final int quantity;
   final StatusRoomModel statusRoom;
   final List<ConvenientModel?>? convenient;
   final List<ReviewModel?>? review;

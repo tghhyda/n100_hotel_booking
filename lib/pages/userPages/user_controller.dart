@@ -26,17 +26,43 @@ class UserController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
+  Future<void> updateRoomQuantity(String roomId, int updatedQuantity) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('rooms') // Thay thế 'rooms' bằng tên của collection phòng
+          .doc(roomId)
+          .update({'quantity': updatedQuantity});
+      print('Room quantity updated successfully');
+    } catch (error) {
+      print('Error updating room quantity: $error');
+    }
+  }
+
   Future<void> addBookingToFirestore(BookingModel booking) async {
     try {
       await FirebaseFirestore.instance
-          .collection('bookings') // Thay thế 'bookings' bằng tên của collection bạn muốn lưu dữ liệu
-          .add(booking.toJson()); // Chuyển BookingModel thành dữ liệu JSON và thêm vào Firestore
+          .collection(
+              'bookings') // Thay thế 'bookings' bằng tên của collection bạn muốn lưu dữ liệu
+          .add(booking
+              .toJson()); // Chuyển BookingModel thành dữ liệu JSON và thêm vào Firestore
+
+      // Trừ theNumberOfRoom của booking từ quantity của phòng
+      if (booking.room != null) {
+        RoomModel room = await getRoomById(booking.room!);
+        int updatedQuantity = room.quantity - booking.numberOfRooms!;
+
+        if (updatedQuantity >= 0) {
+          await updateRoomQuantity(room.idRoom, updatedQuantity);
+        } else {
+          print('Insufficient quantity of rooms');
+        }
+      }
+
       print('Booking added successfully');
     } catch (error) {
       print('Error adding booking: $error');
     }
   }
-
 
   String generateRandomId() {
     var random = Random();
@@ -49,10 +75,10 @@ class UserController extends GetxController {
 
   Future<List<ReviewModel>> getListReviewsForRoom(String roomId) async {
     final CollectionReference reviewsCollection =
-    FirebaseFirestore.instance.collection('reviews');
+        FirebaseFirestore.instance.collection('reviews');
 
     final QuerySnapshot querySnapshot =
-    await reviewsCollection.where('room', isEqualTo: roomId).get();
+        await reviewsCollection.where('room', isEqualTo: roomId).get();
 
     final List<ReviewModel> reviews = querySnapshot.docs
         .map((doc) => ReviewModel.fromJson(doc.data() as Map<String, dynamic>))
@@ -65,9 +91,9 @@ class UserController extends GetxController {
       ReviewModel review, RoomModel room) async {
     try {
       final CollectionReference reviewsCollection =
-      FirebaseFirestore.instance.collection('reviews');
+          FirebaseFirestore.instance.collection('reviews');
       final DocumentReference roomRef =
-      FirebaseFirestore.instance.collection('rooms').doc(room.idRoom);
+          FirebaseFirestore.instance.collection('rooms').doc(room.idRoom);
 
       await FirebaseFirestore.instance.runTransaction((transaction) async {
         // Add the new review to the 'reviews' collection
@@ -97,7 +123,6 @@ class UserController extends GetxController {
       rethrow;
     }
   }
-
 
   Future<UserModel> getCurrentUserInfoByEmail(String email) async {
     DocumentSnapshot snapshot =
