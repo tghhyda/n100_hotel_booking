@@ -19,10 +19,8 @@ class BookingCardWidget extends GetView<HistoryController> {
 
   ImageIcon _getBookingStatusIcon() {
     if (bookingModel.isCancelBooking == true) {
-      return ImageIcon(
-          const AssetImage("assets/bookingStatus/cancel_icon.png"),
-          size: 100,
-          color: AppColors.of.redColor[5]);
+      return ImageIcon(const AssetImage("assets/bookingStatus/cancel_icon.png"),
+          size: 100, color: AppColors.of.redColor[5]);
     }
     if (bookingModel.isConfirm == false) {
       return ImageIcon(
@@ -150,16 +148,31 @@ class BookingCardWidget extends GetView<HistoryController> {
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert),
                 onSelected: (String choice) {
-                  if(choice == "Cancel Booking"){
-                    print("Cancel");
+                  if (choice == "cancelBooking") {
+                    controller.updateBookingIsCancelStatusByUserAndRoom(
+                        controller.currentUser!.email,
+                        bookingModel.room!,
+                        true);
+                  }
+                  if (choice == "turnOff") {
+                    controller.updateBookingIsCancelStatusByUserAndRoom(
+                        controller.currentUser!.email,
+                        bookingModel.room!,
+                        false);
                   }
                 },
                 itemBuilder: (BuildContext context) {
                   return <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'Cancel Booking',
-                      child: Text('Cancel'),
-                    ),
+                    if (bookingModel.isCancelBooking == false)
+                      const PopupMenuItem<String>(
+                        value: 'cancelBooking',
+                        child: Text('Cancel'),
+                      ),
+                    if (bookingModel.isCancelBooking == true)
+                      const PopupMenuItem<String>(
+                        value: 'turnOff',
+                        child: Text('Turn off request'),
+                      ),
                   ];
                 },
               )

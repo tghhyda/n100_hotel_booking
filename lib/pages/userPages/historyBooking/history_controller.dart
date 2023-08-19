@@ -15,6 +15,30 @@ class HistoryController extends GetxController {
         FirebaseAuth.instance.currentUser!.email!);
   }
 
+  Future<void> updateBookingIsCancelStatusByUserAndRoom(
+      String email, String roomId, bool newIsCancelStatus) async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('bookings')
+          .where('user', isEqualTo: email)
+          .where('room', isEqualTo: roomId)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        String bookingId = snapshot.docs[0].id; // Lấy ID của tài liệu booking
+        await FirebaseFirestore.instance
+            .collection('bookings')
+            .doc(bookingId)
+            .update({'isCancelBooking': newIsCancelStatus});
+        print('Booking cancellation status updated successfully');
+      } else {
+        print('No booking found for the specified user and room');
+      }
+    } catch (error) {
+      print('Error updating booking cancellation status: $error');
+    }
+  }
+
   Future<List<BookingModel>> fetchAllBookings() async {
     User? currentUser = _auth.currentUser;
 
@@ -43,14 +67,19 @@ class HistoryController extends GetxController {
 
   Future<List<BookingModel>> fetchUnconfirmedBookings() async {
     List<BookingModel> allBookings = await fetchAllBookings();
-    return allBookings.where((booking) => booking.isConfirm == false).toList();
+    return allBookings
+        .where((booking) =>
+            booking.isConfirm == false && booking.isCancelBooking == false)
+        .toList();
   }
 
   Future<List<BookingModel>> fetchConfirmedBookings() async {
     List<BookingModel> allBookings = await fetchAllBookings();
     return allBookings
         .where((booking) =>
-            booking.isConfirm == true && booking.isCheckIn == false)
+            booking.isConfirm == true &&
+            booking.isCheckIn == false &&
+            booking.isCancelBooking == false)
         .toList();
   }
 
@@ -58,7 +87,9 @@ class HistoryController extends GetxController {
     List<BookingModel> allBookings = await fetchAllBookings();
     return allBookings
         .where((booking) =>
-            booking.isConfirm == true && booking.isCheckIn == false)
+            booking.isConfirm == true &&
+            booking.isCancelBooking == false &&
+            booking.isCheckIn == false)
         .toList();
   }
 
@@ -66,8 +97,11 @@ class HistoryController extends GetxController {
   Future<List<BookingModel>> fetchCheckedInBookings() async {
     List<BookingModel> allBookings = await fetchAllBookings();
     return allBookings
-        .where(
-            (booking) => booking.isConfirm == true && booking.isCheckIn == true)
+        .where((booking) =>
+            booking.isConfirm == true &&
+            booking.isCheckIn == true &&
+            booking.isCancelBooking == false &&
+            booking.isPaid == false)
         .toList();
   }
 
@@ -75,7 +109,10 @@ class HistoryController extends GetxController {
   Future<List<BookingModel>> fetchPaidBookings() async {
     List<BookingModel> allBookings = await fetchAllBookings();
     return allBookings
-        .where((booking) => booking.isConfirm == true && booking.isPaid == true)
+        .where((booking) =>
+            booking.isConfirm == true &&
+            booking.isCancelBooking == false &&
+            booking.isPaid == true)
         .toList();
   }
 

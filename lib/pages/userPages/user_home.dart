@@ -23,7 +23,7 @@ class UserHome extends GetView<UserController> {
     return Scaffold(
         backgroundColor: AppColorsExt.backgroundColor,
         appBar: AppBar(
-          title: Text('${FirebaseAuth.instance.currentUser?.displayName}'),
+          title: Text('${controller.currentUser?.nameUser}'),
           backgroundColor: AppColorsExt.backgroundColor,
           elevation: 1,
           actions: [
@@ -40,7 +40,6 @@ class UserHome extends GetView<UserController> {
             currentIndex: _currentPageIndex.value,
             onTap: (index) {
               _currentPageIndex.value = index;
-              print("Qqqqqqqqqqqqqqqqqqqqqqqqqqqq");
             },
             items: const [
               BottomNavigationBarItem(

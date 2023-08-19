@@ -26,6 +26,7 @@ class UserController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
+
   Future<void> updateRoomQuantity(String roomId, int updatedQuantity) async {
     try {
       await FirebaseFirestore.instance

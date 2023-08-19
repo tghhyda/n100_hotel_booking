@@ -4,6 +4,7 @@ import 'package:n100_hotel_booking/components/button/app_button_base_builder.dar
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
+import 'package:n100_hotel_booking/pages/userPages/room/room_detail_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 
 class RecommendedRooms extends GetView<UserController> {
@@ -49,44 +50,49 @@ class RecommendedRooms extends GetView<UserController> {
                     itemCount: roomList.length,
                     itemBuilder: (BuildContext context, int index) {
                       RoomModel room = roomList[index];
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          // Điều chỉnh góc bo tròn tùy theo nhu cầu
-                          side: const BorderSide(
-                            color: Colors.grey, // Màu viền
-                            width: 1, // Độ dày của viền
+                      return InkWell(
+                        onTap: () {
+                          Get.to(() =>RoomDetailPage(), arguments: room);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            // Điều chỉnh góc bo tròn tùy theo nhu cầu
+                            side: const BorderSide(
+                              color: Colors.grey, // Màu viền
+                              width: 1, // Độ dày của viền
+                            ),
                           ),
-                        ),
-                        shadowColor: AppColors.of.grayColor[10],
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: room.images!.isNotEmpty
-                                  ? Image.network(
-                                room.images![0]!,
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              )
-                                  : Image.asset(
-                                'assets/adsImage/room4.png',
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
+                          shadowColor: AppColors.of.grayColor[10],
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: room.images!.isNotEmpty
+                                    ? Image.network(
+                                        room.images![0]!,
+                                        width: 150,
+                                        height: 150,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.asset(
+                                        'assets/adsImage/room4.png',
+                                        width: 150,
+                                        height: 150,
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            AppTextBody1Widget()
-                                .setText(room.typeRoom.nameTypeRoom)
-                                .setTextOverFlow(TextOverflow.ellipsis)
-                                .setMaxLines(1)
-                                .build(context)
-                          ],
+                              const SizedBox(
+                                height: 4,
+                              ),
+                              AppTextBody1Widget()
+                                  .setText(room.typeRoom.nameTypeRoom)
+                                  .setTextOverFlow(TextOverflow.ellipsis)
+                                  .setMaxLines(1)
+                                  .build(context)
+                            ],
+                          ),
                         ),
                       );
                     },
