@@ -58,16 +58,16 @@ class UserHomePage extends GetView<UserController> {
                         final DateTimeRange? dateTimeRange =
                             await showDateRangePicker(
                                 context: context,
-                                firstDate: DateTime(2000),
+                                firstDate: DateTime.now(),
                                 lastDate: DateTime(3000));
                         if (dateTimeRange != null) {
-                          controller.selectedDates?.value = dateTimeRange;
+                          controller.selectedDates.value = dateTimeRange;
                           final DateFormat formatter = DateFormat('dd/MM/yyyy');
                           final String startDate = formatter
-                              .format(controller.selectedDates!.value.start);
+                              .format(controller.selectedDates.value.start);
                           final String endDate = formatter
-                              .format(controller.selectedDates!.value.end);
-                          controller.selectedDatesController?.text =
+                              .format(controller.selectedDates.value.end);
+                          controller.selectedDatesController.text =
                               "$startDate - $endDate";
                         }
                       }).build(context),

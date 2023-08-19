@@ -8,6 +8,8 @@ part 'room/booking_model.dart';
 part 'room/convenient_model.dart';
 part 'room/status_room_model.dart';
 part 'room/review_model.dart';
+part 'room/service_model.dart';
+part 'room/promo_code_model.dart';
 
 abstract class BaseModel {}
 class EmptyModel extends BaseModel {}

@@ -4,6 +4,7 @@ import 'package:n100_hotel_booking/components/button/app_button_base_builder.dar
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
+import 'package:n100_hotel_booking/pages/userPages/bookingPage/booking_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 import 'package:n100_hotel_booking/pages/userPages/views/room_detail_description_view.dart';
 import 'package:n100_hotel_booking/pages/userPages/views/room_detail_review_view.dart';
@@ -16,9 +17,10 @@ class RoomDetailPage extends GetView<UserController> {
   @override
   final controller = Get.put(UserController());
 
+  final RoomModel room = Get.arguments;
+
   @override
   Widget build(BuildContext context) {
-    final RoomModel room = Get.arguments;
     int numberOfPhoto = room.images!.isEmpty ? 4 : room.images!.length;
     return Scaffold(
       body: DefaultTabController(
@@ -52,8 +54,7 @@ class RoomDetailPage extends GetView<UserController> {
                       size: 20,
                     ),
                     AppTextSubTitle1Widget()
-                        .setText(
-                            '${(controller.getRating(room) * 2).round() / 2}')
+                        .setText(controller.getRating(room).toStringAsFixed(1))
                         .setColor(AppColors.of.grayColor[1])
                         .build(context),
                     const SizedBox(
@@ -133,8 +134,9 @@ class RoomDetailPage extends GetView<UserController> {
                 ),
                 child: AppTextButtonWidget()
                     .setButtonText("BOOKING NOW")
-                    .setOnPressed(() {})
-                    .build(context),
+                    .setOnPressed(() {
+                  Get.to(() => BookingPage(), arguments: room.idRoom);
+                }).build(context),
               ),
             ),
           ],

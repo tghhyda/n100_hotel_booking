@@ -4,8 +4,9 @@ import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
+import 'package:n100_hotel_booking/pages/userPages/bookingPage/booking_page.dart';
+import 'package:n100_hotel_booking/pages/userPages/room/room_detail_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
-import 'package:n100_hotel_booking/pages/userPages/booking/room_detail_page.dart';
 
 class FilterRoomListView extends GetView<UserController> {
   FilterRoomListView({super.key});
@@ -167,7 +168,7 @@ class FilterRoomListView extends GetView<UserController> {
                                                 ),
                                                 AppTextSubTitle1Widget()
                                                     .setText(
-                                                        '${(controller.getRating(room) * 2).round() / 2}')
+                                                        controller.getRating(room).toStringAsFixed(1))
                                                     .setColor(AppColors
                                                         .of.grayColor[6])
                                                     .build(context),
@@ -214,7 +215,10 @@ class FilterRoomListView extends GetView<UserController> {
                                                                 .black), // Thay đổi border radius ở đây
                                                   ),
                                                 ),
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  Get.to(() => BookingPage(),
+                                                  arguments: room.idRoom);
+                                                },
                                                 child: AppTextSubTitle1Widget()
                                                     .setText("Book now")
                                                     .build(context))

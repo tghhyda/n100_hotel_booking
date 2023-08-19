@@ -53,6 +53,8 @@ class AddRoomPage extends GetView<AdminController> {
 
   @override
   Widget build(BuildContext context) {
+    String idRoom = generateRandomId();
+
     return Scaffold(
       backgroundColor: AppColorsExt.backgroundColor,
       appBar: AppBar(
@@ -485,22 +487,8 @@ class AddRoomPage extends GetView<AdminController> {
                             selectedStatusRoom?.value ??=
                                 controller.statusList?.first;
 
-                            // RoomModel room1 = RoomModel(
-                            //     idRoom,
-                            //     typeRoom,
-                            //     priceRoom,
-                            //     capacity,
-                            //     area,
-                            //     beds,
-                            //     quantity,
-                            //     statusRoom,
-                            //     convenient,
-                            //     review,
-                            //     images,
-                            //     description);
-
                             RoomModel room = RoomModel(
-                                generateRandomId(),
+                                idRoom,
                                 selectedTypeRoom!.value!,
                                 int.parse(priceController.text),
                                 int.parse(capacityController.text),
@@ -513,7 +501,7 @@ class AddRoomPage extends GetView<AdminController> {
                                 [],
                                 [],
                                 descriptionController.text);
-                            _onUploadImages();
+                            _onUploadImages(idRoom);
                             controller.postRoomDataToFirebase(room);
                           } catch (e) {
                             rethrow;
@@ -561,8 +549,7 @@ class AddRoomPage extends GetView<AdminController> {
     return id;
   }
 
-  void _onUploadImages() async {
-    String roomId = generateRandomId();
+  void _onUploadImages(String roomId) async {
     List<String> imageUrls =
         await uploadImagesToFirebase(selectedImages, roomId);
     FirebaseFirestore.instance.collection('rooms').doc(roomId).set({

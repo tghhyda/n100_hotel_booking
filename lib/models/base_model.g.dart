@@ -79,12 +79,8 @@ Map<String, dynamic> _$TypeRoomModelToJson(TypeRoomModel instance) =>
     };
 
 BookingModel _$BookingModelFromJson(Map<String, dynamic> json) => BookingModel(
-      json['user'] == null
-          ? null
-          : UserModel.fromJson(json['user'] as Map<String, dynamic>),
-      json['room'] == null
-          ? null
-          : RoomModel.fromJson(json['room'] as Map<String, dynamic>),
+      json['user'] as String?,
+      json['room'] as String?,
       json['startDate'] == null
           ? null
           : DateTime.parse(json['startDate'] as String),
@@ -94,9 +90,18 @@ BookingModel _$BookingModelFromJson(Map<String, dynamic> json) => BookingModel(
       json['numberOfRooms'] as int?,
       json['numberOfAdult'] as int?,
       json['numberOfChildren'] as int?,
+      json['promoCode'] as String?,
+      (json['services'] as List<dynamic>?)
+          ?.map((e) => e == null
+              ? null
+              : ServiceModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      (json['totalPrice'] as num?)?.toDouble(),
+      json['isCancelBooking'] as bool?,
+      json['isConfirm'] as bool?,
       json['isCheckIn'] as bool?,
       json['isCheckOut'] as bool?,
-      json['isPayment'] as bool?,
+      json['isPaid'] as bool?,
     );
 
 Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
@@ -108,9 +113,14 @@ Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
       'numberOfRooms': instance.numberOfRooms,
       'numberOfAdult': instance.numberOfAdult,
       'numberOfChildren': instance.numberOfChildren,
+      'promoCode': instance.promoCode,
+      'services': instance.services,
+      'totalPrice': instance.totalPrice,
+      'isCancelBooking': instance.isCancelBooking,
+      'isConfirm': instance.isConfirm,
       'isCheckIn': instance.isCheckIn,
       'isCheckOut': instance.isCheckOut,
-      'isPayment': instance.isPayment,
+      'isPaid': instance.isPaid,
     };
 
 ConvenientModel _$ConvenientModelFromJson(Map<String, dynamic> json) =>
@@ -154,4 +164,41 @@ Map<String, dynamic> _$ReviewModelToJson(ReviewModel instance) =>
       'timeReview': instance.timeReview.toIso8601String(),
       'detailReview': instance.detailReview,
       'rate': instance.rate,
+    };
+
+ServiceModel _$ServiceModelFromJson(Map<String, dynamic> json) => ServiceModel(
+      json['idService'] as String?,
+      json['nameService'] as String?,
+      json['imageService'] as String?,
+      (json['priceService'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$ServiceModelToJson(ServiceModel instance) =>
+    <String, dynamic>{
+      'idService': instance.idService,
+      'nameService': instance.nameService,
+      'imageService': instance.imageService,
+      'priceService': instance.priceService,
+    };
+
+PromoCodeModel _$PromoCodeModelFromJson(Map<String, dynamic> json) =>
+    PromoCodeModel(
+      json['idPromo'] as String?,
+      json['namePromo'] as String?,
+      json['startDate'] == null
+          ? null
+          : DateTime.parse(json['startDate'] as String),
+      json['endDate'] == null
+          ? null
+          : DateTime.parse(json['endDate'] as String),
+      (json['discount'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$PromoCodeModelToJson(PromoCodeModel instance) =>
+    <String, dynamic>{
+      'idPromo': instance.idPromo,
+      'namePromo': instance.namePromo,
+      'startDate': instance.startDate?.toIso8601String(),
+      'endDate': instance.endDate?.toIso8601String(),
+      'discount': instance.discount,
     };
