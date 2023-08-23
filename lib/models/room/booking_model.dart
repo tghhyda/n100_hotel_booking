@@ -1,6 +1,7 @@
 part of '../base_model.dart';
 
 @JsonSerializable()
+@CopyWith()
 class BookingModel {
   final String? user;
   final String? room;

@@ -2,6 +2,7 @@
 part of '../base_model.dart';
 
 @JsonSerializable()
+@CopyWith()
 class StatusRoomModel{
   final String idStatus;
   final String description;

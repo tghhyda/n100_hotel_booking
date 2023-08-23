@@ -1,15 +1,16 @@
 part of 'base_model.dart';
 
 @JsonSerializable()
+@CopyWith()
 class UserModel {
   final String nameUser;
-  final String birthday;
-  final String phoneNumber;
-  final String imageUrl;
+  String? birthday;
+  String? phoneNumber;
+  String? imageUrl;
   final String role;
   final String email;
-  final String address;
-  final String gender;
+  String? address;
+  String? gender;
 
   UserModel(
       {required this.nameUser,

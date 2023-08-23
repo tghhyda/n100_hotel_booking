@@ -2,6 +2,7 @@
 part of '../base_model.dart';
 
 @JsonSerializable()
+@CopyWith()
 class RoomModel {
   final String idRoom;
   final TypeRoomModel typeRoom;

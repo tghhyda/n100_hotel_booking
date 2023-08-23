@@ -2,6 +2,7 @@
 part of '../base_model.dart';
 
 @JsonSerializable()
+@CopyWith()
 class ConvenientModel{
   final String idConvenient;
   final String nameConvenient;

@@ -19,7 +19,9 @@ class RegisterController {
                 postDetailsToFireStore(
                     context, userModel)
               })
-          .catchError((e) {});
+          .catchError((e) {
+            print(e);
+      });
     }
   }
 

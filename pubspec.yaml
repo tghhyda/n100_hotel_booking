@@ -60,6 +60,7 @@ dependencies:
   url_launcher: ^6.1.12
   uuid: ^3.0.7
   flutter_loadingindicator: ^1.0.1
+  copy_with_extension: ^5.0.4
 
 dev_dependencies:
   flutter_test:

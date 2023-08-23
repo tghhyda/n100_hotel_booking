@@ -36,7 +36,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    widget.user.imageUrl,
+                    widget.user.imageUrl!,
                     height: 200,
                     fit: BoxFit.cover,
                   ),

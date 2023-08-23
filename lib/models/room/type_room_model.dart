@@ -1,6 +1,7 @@
 part of '../base_model.dart';
 
 @JsonSerializable()
+@CopyWith()
 class TypeRoomModel {
   String? idTypeRoom;
   String? nameTypeRoom;

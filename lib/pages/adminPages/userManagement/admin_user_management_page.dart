@@ -172,7 +172,7 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
                               color: Colors.grey.withOpacity(0.2),
                               // Replace with your image widget
                               child: Image.network(
-                                user.imageUrl,
+                                user.imageUrl!,
                                 fit: BoxFit.cover,
                               ),
                             ),

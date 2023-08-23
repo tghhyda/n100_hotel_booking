@@ -20,6 +20,7 @@ class UserController extends GetxController {
   UserModel? currentUser;
   RxInt? rating = 0.obs;
   String? roomId;
+  RxBool isInitialized = false.obs;
 
   final formKey = GlobalKey<FormState>();
 
@@ -251,12 +252,18 @@ class UserController extends GetxController {
     return rating;
   }
 
+  Future<void> getCurrentUserAndInitialize() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      currentUser = await getCurrentUserInfoByEmail(user.email!);
+    }
+  }
+
   @override
   void onInit() async {
     super.onInit();
-    currentUser = await getCurrentUserInfoByEmail(
-        FirebaseAuth.instance.currentUser!.email!);
-    print("${currentUser?.nameUser} aaaaaaaaaaaaaaaaaaa");
-    fetchRoomList();
+    await getCurrentUserAndInitialize();
+    await fetchRoomList();
+    isInitialized.value = true;
   }
 }

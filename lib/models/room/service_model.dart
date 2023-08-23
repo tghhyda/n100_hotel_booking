@@ -2,6 +2,7 @@
 part of '../base_model.dart';
 
 @JsonSerializable()
+@CopyWith()
 class ServiceModel {
   String? idService;
   String? nameService;

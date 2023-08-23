@@ -87,7 +87,7 @@ class RoomPostReviewView extends GetView<UserController> {
                   borderRadius: BorderRadius.circular(50),
                   child: controller.currentUser?.imageUrl != null
                       ? Image.network(
-                          controller.currentUser!.imageUrl,
+                          controller.currentUser!.imageUrl!,
                           height: 35,
                           width: 35,
                         )
