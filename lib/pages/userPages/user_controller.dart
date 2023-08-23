@@ -266,4 +266,10 @@ class UserController extends GetxController {
     await fetchRoomList();
     isInitialized.value = true;
   }
+
+  @override
+  void onClose() {
+    currentUser = null;
+    super.onClose();
+  }
 }

@@ -5,17 +5,18 @@ import 'package:get/get.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
+import 'package:n100_hotel_booking/pages/generalPages/profilePage/profile_controller.dart';
 import 'package:n100_hotel_booking/pages/generalPages/profilePage/profile_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/historyBooking/history_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/user_home_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/user_setting.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 
-class UserHome extends GetView<UserController> {
+class UserHome extends GetView<ProfileController> {
   final RxInt _currentPageIndex = 0.obs;
 
   @override
-  final controller = Get.put(UserController());
+  final controller = Get.put(ProfileController());
 
   final List<Widget> _pages = [UserHomePage(), HistoryPage(), UserSetting()];
 
@@ -57,7 +58,7 @@ class UserHome extends GetView<UserController> {
               Row(
                 children: [
                   AppTextBody1Widget()
-                      .setText("${controller.currentUser?.nameUser}")
+                      .setText("${controller.currentUser.value?.nameUser}")
                       .build(context),
                   const SizedBox(
                     width: 8,
@@ -69,9 +70,9 @@ class UserHome extends GetView<UserController> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(60),
                       child:
-                          controller.currentUser?.imageUrl?.isNotEmpty == true
+                          controller.avatarUrl.isNotEmpty == true
                               ? Image.network(
-                                  controller.currentUser!.imageUrl!,
+                                  controller.avatarUrl.value,
                                   height: 35,
                                   width: 35,
                                 )

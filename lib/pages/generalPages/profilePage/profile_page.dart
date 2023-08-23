@@ -23,25 +23,29 @@ class ProfilePage extends GetView<ProfileController> {
               }).build(context)
             ],
           ),
-          body: Column(
-            children: [
-              controller.currentUser?.imageUrl?.isNotEmpty == true
-                  ? CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(controller.currentUser!.imageUrl!),
-                      radius: 60,
-                    )
-                  : const CircleAvatar(
-                      backgroundImage: AssetImage(
-                          'assets/defaultImage/user_default_avatar.png'),
-                      radius: 60,
-                    ),
-              // Button to pick and update image
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text("Pick Image"),
-              ),
-            ],
+          body: Obx(
+            () => Column(
+              children: [
+                controller.avatarUrl.isNotEmpty == true
+                    ? CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(controller.avatarUrl.value),
+                        radius: 60,
+                      )
+                    : const CircleAvatar(
+                        backgroundImage: AssetImage(
+                            'assets/defaultImage/user_default_avatar.png'),
+                        radius: 60,
+                      ),
+                // Button to pick and update image
+                ElevatedButton(
+                  onPressed: () async {
+                    await controller.pickImageAndUpload();
+                  },
+                  child: const Text("Pick Image"),
+                ),
+              ],
+            ),
           ),
         );
       } else {
