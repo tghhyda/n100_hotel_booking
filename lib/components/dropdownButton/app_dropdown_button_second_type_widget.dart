@@ -43,13 +43,19 @@ class AppDropdownButtonSecondTypeWidget {
         items: listItem
             ?.map((String item) => DropdownMenuItem<String>(
                   value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.transgender),
+                      const SizedBox(width: 4,),
+                      Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          // color: Colors.black,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ))
             .toList(),
@@ -64,7 +70,7 @@ class AppDropdownButtonSecondTypeWidget {
             ),
             color: Colors.white,
           ),
-          elevation: 2,
+          elevation: 0,
         ),
       ),
     );

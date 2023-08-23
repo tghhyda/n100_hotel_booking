@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,16 +16,52 @@ class ProfileController extends GetxController {
   RxBool isEditMode = false.obs;
   RxBool isInitialized = false.obs;
   RxString avatarUrl = ''.obs;
+  RxString nameUser = ''.obs;
   final ImagePicker _imagePicker = ImagePicker();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController birthdayController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
+  final List<String> listGenders = ['Male', 'Female'];
+  RxString selectedGender = RxString('Male');
+  Rx<DateTime?> selectedBirthDate = Rx<DateTime?>(null);
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void onInit() async {
     await getCurrentUserAndInitialize();
     avatarUrl.value = currentUser.value?.imageUrl ?? '';
+    nameUser.value = currentUser.value?.nameUser ?? '';
     isInitialized.value = true;
+    nameController.text = currentUser.value!.nameUser ?? '';
+    phoneController.text = currentUser.value!.phoneNumber ?? '1234567891';
+    birthdayController.text =
+        currentUser.value!.birthday ?? DateTime.now().toString();
+    addressController.text = currentUser.value!.address ?? 'Somewhere';
+    selectedGender.value = currentUser.value!.gender ?? 'Male';
+    genderController.text = selectedGender.value;
+    emailController.text = currentUser.value!.email;
     super.onInit();
+  }
+
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && picked != selectedBirthDate.value) {
+        selectedBirthDate.value = picked;
+        birthdayController.text = picked.toString();
+    }
   }
 
   Future<void> getCurrentUserAndInitialize() async {

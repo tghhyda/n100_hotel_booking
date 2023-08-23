@@ -183,7 +183,7 @@ class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  user.nameUser,
+                                  user.nameUser!,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,

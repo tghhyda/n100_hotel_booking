@@ -3,7 +3,7 @@ part of 'base_model.dart';
 @JsonSerializable()
 @CopyWith()
 class UserModel {
-  final String nameUser;
+  String? nameUser;
   String? birthday;
   String? phoneNumber;
   String? imageUrl;

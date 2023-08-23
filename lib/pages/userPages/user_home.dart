@@ -58,7 +58,7 @@ class UserHome extends GetView<ProfileController> {
               Row(
                 children: [
                   AppTextBody1Widget()
-                      .setText("${controller.currentUser.value?.nameUser}")
+                      .setText(controller.nameUser.value)
                       .build(context),
                   const SizedBox(
                     width: 8,
