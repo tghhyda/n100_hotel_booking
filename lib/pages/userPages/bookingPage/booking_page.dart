@@ -40,7 +40,10 @@ class BookingPage extends GetView<UserController> {
           }
 
           selectedRoom = snapshot.data!;
-          double stayPrice = stayNights.toDouble() * selectedRoom.priceRoom;
+          double stayPricePerRoom =
+              stayNights.toDouble() * selectedRoom.priceRoom;
+          double stayPrice =
+              stayPricePerRoom * controller.theNumberOfRooms!.value;
           double taxes = (stayPrice * 6.5) / 100;
           double totalPrice = stayPrice + taxes;
 
@@ -135,13 +138,17 @@ class BookingPage extends GetView<UserController> {
                                         .setColor(AppColors.of.grayColor[7])
                                         .build(context),
                                     const Spacer(),
-                                    AppTextSubTitle1Widget()
-                                        .setText(
-                                            "$stayNights Nights (${selectedRoom.priceRoom} x $stayNights = $stayPrice)")
-                                        .setTextStyle(
-                                            AppTextStyleExt.of.textSubTitle1s)
-                                        .setColor(AppColors.of.grayColor[10])
-                                        .build(context),
+                                    Expanded(
+                                      child: AppTextSubTitle1Widget()
+                                          .setText(
+                                              "$stayNights Nights (${selectedRoom.priceRoom} x $stayNights = $stayPricePerRoom) x ${controller.theNumberOfRooms} rooms = $stayPrice VND")
+                                          .setTextStyle(
+                                              AppTextStyleExt.of.textSubTitle1s)
+                                          .setMaxLines(3)
+                                          // .setTextOverFlow(TextOverflow.ellipsis)
+                                          .setColor(AppColors.of.grayColor[10])
+                                          .build(context),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(
@@ -150,12 +157,12 @@ class BookingPage extends GetView<UserController> {
                                 Row(
                                   children: [
                                     AppTextSubTitle1Widget()
-                                        .setText("Taxes")
+                                        .setText("Taxes (6.5%)")
                                         .setColor(AppColors.of.grayColor[7])
                                         .build(context),
                                     const Spacer(),
                                     AppTextSubTitle1Widget()
-                                        .setText("$taxes")
+                                        .setText("$taxes VND")
                                         .setTextStyle(
                                             AppTextStyleExt.of.textSubTitle1s)
                                         .setColor(AppColors.of.grayColor[10])
@@ -171,7 +178,7 @@ class BookingPage extends GetView<UserController> {
                                         .build(context),
                                     const Spacer(),
                                     AppTextSubTitle1Widget()
-                                        .setText("$totalPrice")
+                                        .setText("$totalPrice VND")
                                         .setTextStyle(
                                             AppTextStyleExt.of.textSubTitle1s)
                                         .setColor(AppColors.of.grayColor[10])

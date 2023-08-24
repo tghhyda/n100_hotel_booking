@@ -1,11 +1,58 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dart';
+import 'package:n100_hotel_booking/components/snackBar/app_snack_bar_base_builder.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
+import 'package:n100_hotel_booking/pages/adminPages/roomManagement/admin_room_view_detail.dart';
 
 class AdminController extends GetxController {
   List<TypeRoomModel>? typeRoomList;
   List<StatusRoomModel>? statusList;
 
+  Future<void> deleteRoomAndCheckBooking(String roomId) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final roomRef = firestore.collection('rooms').doc(roomId);
+
+
+      final bookingSnapshot = await firestore
+          .collection('bookings')
+          .where('room', isEqualTo: roomId)
+          .get();
+
+      if (bookingSnapshot.docs.isNotEmpty) {
+        // Room is booked, handle the situation here
+        AppDefaultDialogWidget()
+            .setAppDialogType(AppDialogType.error)
+            .setContent("This room is booked, cannot delete")
+            .setIsHaveCloseIcon(true)
+            .buildDialog(Get.context!)
+            .show();
+        print('Cannot delete: Room is booked');
+        return;
+      }
+
+      // Room is not booked, delete the room
+      await roomRef.delete();
+      await Get.off(() => AdminRoomDetailPage());
+      AppSnackBarWidget()
+          .setShowOnTop(SnackPosition.TOP)
+          .setAppSnackBarType(AppSnackBarType.toastMessage)
+          .setAppSnackBarStatus(AppSnackBarStatus.success)
+          .setContent(const Text("Delete room success"))
+          .showSnackBar(Get.context!);
+      print('Room deleted successfully');
+    } catch (e) {
+      AppDefaultDialogWidget()
+          .setAppDialogType(AppDialogType.error)
+          .setContent("Something went wrong")
+          .setIsHaveCloseIcon(true)
+          .buildDialog(Get.context!)
+          .show();
+      rethrow;
+    }
+  }
 
   Future<int> countBookingsByRoom(String room) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -130,7 +177,6 @@ class AdminController extends GetxController {
       rethrow;
     }
   }
-
 
   @override
   void onInit() async {

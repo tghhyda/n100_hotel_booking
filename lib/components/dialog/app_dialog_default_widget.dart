@@ -73,22 +73,22 @@ class AppDefaultDialogWidget extends AppDialogBaseBuilder {
     if (_appDialogType == AppDialogType.success) {
       setIcon(Image.asset(
         'assets/statusDialog/success_status_icon.png',
-        height: 30,
-        width: 30,
+        height: 80,
+        width: 80,
       ));
     }
     if (_appDialogType == AppDialogType.error) {
       setIcon(Image.asset(
         'assets/statusDialog/error_status_icon.png',
-        height: 30,
-        width: 30,
+        height: 80,
+        width: 80,
       ));
     }
     if (_appDialogType == AppDialogType.confirm) {
       setIcon(Image.asset(
         'assets/statusDialog/confirm_status_icon.png',
-        height: 30,
-        width: 30,
+        height: 80,
+        width: 80,
       ));
     }
     _dialog = Dialog(

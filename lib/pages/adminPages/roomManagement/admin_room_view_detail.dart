@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:n100_hotel_booking/components/button/app_button_base_builder.dart';
+import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
@@ -31,9 +32,39 @@ class AdminRoomDetailPage extends GetView<AdminController> {
               iconTheme: const IconThemeData(color: Colors.black),
               expandedHeight: 200,
               actions: [
-                IconButton(onPressed: (){
-                  Get.to(()=> EditRoomPage(room: room));
-                }, icon: const Icon(Icons.edit))
+                PopupMenuButton<String>(
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'editRoom',
+                        child: Text('Edit room'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'deleteRoom',
+                        child: Text('Delete room'),
+                      ),
+                    ];
+                  },
+                  onSelected: (String result) {
+                    if (result == 'editRoom') {
+                      Get.to(() => EditRoomPage(), arguments: room);
+                    }
+                    if (result == 'deleteRoom') {
+                      AppDefaultDialogWidget()
+                          .setAppDialogType(AppDialogType.confirm)
+                          .setTitle("Confirm Delete Room")
+                          .setContent("Are you sure to delete this room?")
+                          .setNegativeText("No")
+                          .setPositiveText("Yes")
+                          .setOnPositive(() async {
+                            await controller
+                                .deleteRoomAndCheckBooking(room.idRoom);
+                          })
+                          .buildDialog(context)
+                          .show();
+                    }
+                  },
+                ),
               ],
               title: AppTextBody1Widget()
                   .setText("${room.typeRoom.nameTypeRoom}")
@@ -43,13 +74,13 @@ class AdminRoomDetailPage extends GetView<AdminController> {
               flexibleSpace: FlexibleSpaceBar(
                 background: room.images!.isNotEmpty
                     ? Image.network(
-                  room.images![0]!,
-                  fit: BoxFit.cover,
-                )
+                        room.images![0]!,
+                        fit: BoxFit.cover,
+                      )
                     : Image.asset(
-                  'assets/adsImage/room4.png',
-                  fit: BoxFit.cover,
-                ),
+                        'assets/adsImage/room4.png',
+                        fit: BoxFit.cover,
+                      ),
                 titlePadding: const EdgeInsets.only(left: 10, bottom: 10),
                 title: Row(
                   children: [
@@ -109,7 +140,6 @@ class AdminRoomDetailPage extends GetView<AdminController> {
           ],
         ),
       ),
-
     );
   }
 }
