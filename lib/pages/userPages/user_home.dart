@@ -7,10 +7,9 @@ import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/pages/generalPages/profilePage/profile_controller.dart';
 import 'package:n100_hotel_booking/pages/generalPages/profilePage/profile_page.dart';
+import 'package:n100_hotel_booking/pages/generalPages/settingPage/setting_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/historyBooking/history_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/screens/user_home_page.dart';
-import 'package:n100_hotel_booking/pages/userPages/screens/user_setting.dart';
-import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 
 class UserHome extends GetView<ProfileController> {
   final RxInt _currentPageIndex = 0.obs;
@@ -18,7 +17,7 @@ class UserHome extends GetView<ProfileController> {
   @override
   final controller = Get.put(ProfileController());
 
-  final List<Widget> _pages = [UserHomePage(), HistoryPage(), UserSetting()];
+  final List<Widget> _pages = [UserHomePage(), HistoryPage(), SettingPage()];
 
   UserHome({super.key});
 
@@ -69,27 +68,24 @@ class UserHome extends GetView<ProfileController> {
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(60),
-                      child:
-                          controller.avatarUrl.isNotEmpty == true
-                              ? Image.network(
-                                  controller.avatarUrl.value,
-                                  height: 35,
-                                  width: 35,
-                                )
-                              : Image.asset(
-                                  'assets/defaultImage/user_default_avatar.png',
-                                  height: 35,
-                                  width: 35,
-                                ),
+                      child: controller.avatarUrl.isNotEmpty == true
+                          ? Image.network(
+                              controller.avatarUrl.value,
+                              height: 35,
+                              width: 35,
+                            )
+                          : Image.asset(
+                              'assets/defaultImage/user_default_avatar.png',
+                              height: 35,
+                              width: 35,
+                            ),
                     ),
                   )
                 ],
               ),
-              IconButton(
-                  onPressed: () {
-                    controller.handleSignOut();
-                  },
-                  icon: const Icon(Icons.logout))
+              const SizedBox(
+                width: 12,
+              )
             ],
           ),
           body: _pages[_currentPageIndex.value],

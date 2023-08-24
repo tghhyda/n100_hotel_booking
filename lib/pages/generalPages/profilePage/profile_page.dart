@@ -24,6 +24,7 @@ class ProfilePage extends GetView<ProfileController> {
           backgroundColor: AppColorsExt.backgroundColor,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
+            backgroundColor: Colors.transparent,
             title: const Text("Your Profile"),
             actions: [
               controller.isEditMode.value
