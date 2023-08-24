@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
@@ -310,7 +311,8 @@ class BookingPage extends GetView<UserController> {
                   false,
                   false,
                   false,
-                  false);
+                  false,
+                  DateTime.now());
               controller.addBookingToFirestore(bookingModel);
               Get.offAll(UserHome());
               AppSnackBarWidget()

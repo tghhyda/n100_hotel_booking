@@ -102,6 +102,9 @@ BookingModel _$BookingModelFromJson(Map<String, dynamic> json) => BookingModel(
       json['isCheckIn'] as bool?,
       json['isCheckOut'] as bool?,
       json['isPaid'] as bool?,
+      json['createAt'] == null
+          ? null
+          : DateTime.parse(json['createAt'] as String),
     );
 
 Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
@@ -110,6 +113,7 @@ Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
       'room': instance.room,
       'startDate': instance.startDate?.toIso8601String(),
       'endDate': instance.endDate?.toIso8601String(),
+      'createAt': instance.createAt?.toIso8601String(),
       'numberOfRooms': instance.numberOfRooms,
       'numberOfAdult': instance.numberOfAdult,
       'numberOfChildren': instance.numberOfChildren,

@@ -50,6 +50,9 @@ class BookingCardWidget extends GetView<HistoryController> {
   }
 
   bool _showPopupMenu() {
+    if (bookingModel.isPaid == true) {
+      return false;
+    }
     if (bookingModel.isConfirm == true) {
       return true;
     } else {
@@ -132,6 +135,12 @@ class BookingCardWidget extends GetView<HistoryController> {
                                     "${bookingModel.endDate!.difference(bookingModel.startDate!).inDays} Nights"),
                             AppTextBody1Widget()
                                 .setText(
+                                "Order at: ${DateFormat('HH:mm:ss dd/MM/yyyy').format(bookingModel.createAt!)}")
+                                .setMaxLines(2)
+                                .setTextOverFlow(TextOverflow.ellipsis)
+                                .build(context),
+                            AppTextBody1Widget()
+                                .setText(
                                     "Total cost: ${bookingModel.totalPrice} VND")
                                 .setMaxLines(2)
                                 .setTextOverFlow(TextOverflow.ellipsis)
@@ -166,7 +175,7 @@ class BookingCardWidget extends GetView<HistoryController> {
                     if (bookingModel.isCancelBooking == false)
                       const PopupMenuItem<String>(
                         value: 'cancelBooking',
-                        child: Text('Cancel'),
+                        child: Text('Cancel order'),
                       ),
                     if (bookingModel.isCancelBooking == true)
                       const PopupMenuItem<String>(

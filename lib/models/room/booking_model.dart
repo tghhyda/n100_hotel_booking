@@ -7,6 +7,7 @@ class BookingModel {
   final String? room;
   final DateTime? startDate;
   final DateTime? endDate;
+  final DateTime? createAt;
   final int? numberOfRooms;
   final int? numberOfAdult;
   final int? numberOfChildren;
@@ -18,7 +19,6 @@ class BookingModel {
   bool? isCheckIn;
   bool? isCheckOut;
   bool? isPaid;
-
 
   BookingModel(
       this.user,
@@ -35,7 +35,8 @@ class BookingModel {
       this.isConfirm,
       this.isCheckIn,
       this.isCheckOut,
-      this.isPaid);
+      this.isPaid,
+      this.createAt);
 
   factory BookingModel.fromJson(Map<String, dynamic> json) =>
       _$BookingModelFromJson(json);

@@ -6,6 +6,25 @@ class AdminController extends GetxController {
   List<TypeRoomModel>? typeRoomList;
   List<StatusRoomModel>? statusList;
 
+
+  Future<int> countBookingsByRoom(String room) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('bookings')
+        .where('room', isEqualTo: room)
+        .get();
+
+    return querySnapshot.size;
+  }
+
+  Future<int> countBookingsByUser(String user) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('bookings')
+        .where('user', isEqualTo: user)
+        .get();
+
+    return querySnapshot.size;
+  }
+
   Future<List<RoomModel>> fetchRoomList() async {
     try {
       QuerySnapshot roomSnapshot =
@@ -20,6 +39,18 @@ class AdminController extends GetxController {
       print("Error fetching room list: $e");
       return [];
     }
+  }
+
+  double getRating(RoomModel roomModel) {
+    double rating = 5;
+    if (roomModel.review!.isNotEmpty) {
+      double rateTotal = 0;
+      roomModel.review?.forEach((element) {
+        rateTotal += element!.rate;
+      });
+      rating = rateTotal / roomModel.review!.length;
+    }
+    return rating;
   }
 
   Future<List<StatusRoomModel>> fetchStatusList() async {

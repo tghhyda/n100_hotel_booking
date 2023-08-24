@@ -3,13 +3,12 @@ import 'package:get/get.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
-import 'package:n100_hotel_booking/constants/app_url_ext.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_controller.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_room_page.dart';
+import 'package:n100_hotel_booking/pages/adminPages/roomManagement/admin_room_view_detail.dart';
 
 class AdminRoomManagementPage extends GetView<AdminController> {
-
   @override
   final controller = Get.put(AdminController());
 
@@ -66,7 +65,7 @@ class AdminRoomManagementPage extends GetView<AdminController> {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: () {
-                        Get.to(()=> AddRoomPage());
+                        Get.to(() => AddRoomPage());
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8),
@@ -95,38 +94,138 @@ class AdminRoomManagementPage extends GetView<AdminController> {
                   return SizedBox(
                     height: 200,
                     child: ListView.builder(
-                      scrollDirection: Axis.horizontal, // Đặt hướng cuộn là ngang
+                      scrollDirection: Axis.vertical, // Đặt hướng cuộn là ngang
                       itemCount: roomList.length,
                       itemBuilder: (BuildContext context, int index) {
                         RoomModel room = roomList[index];
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            // Điều chỉnh góc bo tròn tùy theo nhu cầu
-                            side: const BorderSide(
-                              color: Colors.grey, // Màu viền
-                              width: 1, // Độ dày của viền
+                        return InkWell(
+                          onTap: () {
+                            Get.to(
+                              () => AdminRoomDetailPage(),
+                              arguments:
+                                  room, // Pass your RoomModel object here
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.of.grayColor[1],
+                                border:
+                                    Border.all(width: 1, color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.of.grayColor[7]!
+                                        .withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    offset: const Offset(1, 0),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: room.images!.isNotEmpty
+                                        ? Image.network(
+                                            room.images![0]!,
+                                            // Thay thế bằng URL hình ảnh thực tế của phòng
+                                            width: 100,
+                                            height: 120,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.asset(
+                                            "assets/adsImage/room4.png",
+                                            width: 100,
+                                            height: 120,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppTextBody1Widget()
+                                            .setText(
+                                                "${room.typeRoom.nameTypeRoom}")
+                                            .setTextStyle(
+                                                AppTextStyleExt.of.textBody1s)
+                                            .build(context),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.star,
+                                              color:
+                                                  AppColors.of.yellowColor[5],
+                                              size: 20,
+                                            ),
+                                            AppTextSubTitle1Widget()
+                                                .setText(controller
+                                                    .getRating(room)
+                                                    .toStringAsFixed(1))
+                                                .setColor(
+                                                    AppColors.of.grayColor[6])
+                                                .build(context),
+                                            const SizedBox(
+                                              width: 16,
+                                            ),
+                                            AppTextSubTitle1Widget()
+                                                .setText(
+                                                    "Reviews (${room.review!.length})")
+                                                .setColor(
+                                                    AppColors.of.grayColor[6])
+                                                .build(context)
+                                          ],
+                                        ),
+                                        AppTextSubTitle1Widget()
+                                            .setText(room.description)
+                                            .setMaxLines(3)
+                                            .setTextOverFlow(
+                                                TextOverflow.ellipsis)
+                                            .setColor(AppColors.of.grayColor[7])
+                                            .build(context),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        AppTextSubTitle1Widget()
+                                            .setText(
+                                                "${room.priceRoom} VND / Night")
+                                            .build(context),
+                                        FutureBuilder<int>(
+                                          future: controller.countBookingsByRoom(room.idRoom),
+                                          builder: (context, bookingSnapshot) {
+                                            if (bookingSnapshot.connectionState == ConnectionState.waiting) {
+                                              return const Text('Loading...');
+                                            } else if (bookingSnapshot.hasError) {
+                                              return Text('Error: ${bookingSnapshot.error}');
+                                            } else if (bookingSnapshot.hasData) {
+                                              int bookingCount = bookingSnapshot.data!;
+                                              return AppTextSubTitle1Widget()
+                                                  .setText("Booking Count: $bookingCount")
+                                                  .build(context);  // Display bookingCount here as text
+                                            } else {
+                                              return const Text('No data available.');
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          shadowColor: AppColors.of.grayColor[10],
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.network(
-                                room.images![0]!,
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              AppTextBody1Widget()
-                                  .setText(room.typeRoom.nameTypeRoom)
-                                  .setTextOverFlow(TextOverflow.ellipsis)
-                                  .setMaxLines(1)
-                                  .build(context)
-                            ],
                           ),
                         );
                       },
@@ -142,5 +241,4 @@ class AdminRoomManagementPage extends GetView<AdminController> {
       ),
     );
   }
-
 }

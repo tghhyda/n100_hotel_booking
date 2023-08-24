@@ -12,8 +12,8 @@ import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 import 'package:uuid/uuid.dart';
 
-class RoomPostReviewView extends GetView<UserController> {
-  RoomPostReviewView({super.key});
+class AdminRoomPostReviewView extends GetView<UserController> {
+  AdminRoomPostReviewView({super.key});
 
   @override
   final controller = Get.put(UserController());
@@ -85,7 +85,7 @@ class RoomPostReviewView extends GetView<UserController> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(50),
-                  child: controller.currentUser?.imageUrl?.isNotEmpty == true
+                  child: controller.currentUser?.imageUrl != null
                       ? Image.network(
                           controller.currentUser!.imageUrl!,
                           height: 35,
