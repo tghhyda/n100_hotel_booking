@@ -1,22 +1,20 @@
-
 part of '../base_model.dart';
 
 @JsonSerializable()
 @CopyWith()
 class RoomModel {
   final String idRoom;
-  final TypeRoomModel typeRoom;
-  final int priceRoom;
-  final int capacity;
-  final int area;
-  final int beds;
-  late final int quantity;
-  final StatusRoomModel statusRoom;
-  final List<ConvenientModel?>? convenient;
-  final List<ReviewModel?>? review;
-  final List<String?>? images;
-  final String description;
-
+  TypeRoomModel typeRoom;
+  int priceRoom;
+  int capacity;
+  int area;
+  int beds;
+  int quantity;
+  StatusRoomModel statusRoom;
+  List<ConvenientModel?>? convenient;
+  List<ReviewModel?>? review;
+  List<String?>? images;
+  String description;
 
   RoomModel(
       this.idRoom,
