@@ -13,4 +13,12 @@ class ConvenientModel{
       _$ConvenientModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ConvenientModelToJson(this);
+
+  @override
+  int get hashCode => idConvenient.hashCode;
+
+  @override
+  bool operator ==(other) {
+    return other is ConvenientModel && idConvenient == other.idConvenient;
+  }
 }

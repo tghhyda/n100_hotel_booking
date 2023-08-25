@@ -34,4 +34,5 @@ class RoomModel {
       _$RoomModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RoomModelToJson(this);
+
 }
