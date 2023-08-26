@@ -23,8 +23,7 @@ class _AdminHomeState extends State<AdminHome> {
     const AdminBookingManagement(),
     const AdminHomePage(),
     AdminRoomManagementPage(),
-    const AdminUserManagementPage(),
-
+    AdminUserManagementPage(),
   ];
 
   @override
@@ -39,7 +38,7 @@ class _AdminHomeState extends State<AdminHome> {
         backgroundColor: AppColorsExt.backgroundColor,
         actions: [
           IconButton(
-            color: Colors.white,
+            color: Colors.black,
             icon: const Icon(Icons.logout),
             onPressed: () {
               signOutUser();
@@ -59,12 +58,9 @@ class _AdminHomeState extends State<AdminHome> {
           });
         },
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Models'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.add),
-              label: 'Models'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.add_business_sharp),
-              label: 'Booking'),
+              icon: Icon(Icons.add_business_sharp), label: 'Booking'),
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',

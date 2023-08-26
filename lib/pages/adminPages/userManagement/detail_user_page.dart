@@ -22,7 +22,6 @@ class _UserDetailPageState extends State<UserDetailPage> {
           style: const TextStyle(color: AppColorsExt.textColor),
         ),
         backgroundColor: AppColorsExt.backgroundColor,
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -34,12 +33,16 @@ class _UserDetailPageState extends State<UserDetailPage> {
               Align(
                 alignment: Alignment.center,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    widget.user.imageUrl!,
-                    height: 200,
-                    fit: BoxFit.cover,
-                  ),
+                  borderRadius: BorderRadius.circular(4),
+                  child: widget.user.imageUrl!.isNotEmpty
+                      ? Image.network(
+                          widget.user.imageUrl!,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          'assets/defaultImage/user_avatar.png',
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               const SizedBox(

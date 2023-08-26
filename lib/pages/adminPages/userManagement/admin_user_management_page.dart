@@ -1,211 +1,144 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dart';
+import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
+import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
+import 'package:n100_hotel_booking/pages/adminPages/userManagement/admin_add_staff.dart';
+import 'package:n100_hotel_booking/pages/adminPages/userManagement/admin_user_management_controller.dart';
 import 'package:n100_hotel_booking/pages/adminPages/userManagement/detail_user_page.dart';
 
-class AdminUserManagementPage extends StatefulWidget {
-  const AdminUserManagementPage({Key? key}) : super(key: key);
+class AdminUserManagementPage extends GetView<AdminUserManagementController> {
+  AdminUserManagementPage({super.key});
+
+  final TextEditingController searchController = TextEditingController();
 
   @override
-  State<AdminUserManagementPage> createState() =>
-      _AdminUserManagementPageState();
-}
-
-class _AdminUserManagementPageState extends State<AdminUserManagementPage> {
-  TextEditingController searchController = TextEditingController();
-
-  List<UserModel> filteredUserList = [];
-
-  void fetchUserList() async {
-    try {
-      QuerySnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('role', isNotEqualTo: 'Admin')
-          .get();
-
-      List<UserModel> users = userSnapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        return UserModel.fromJson(data);
-      }).toList();
-
-      setState(() {
-        filteredUserList = users;
-      });
-    } catch (_) {
-      rethrow;
-    }
-  }
-
+  final controller = Get.put(AdminUserManagementController());
 
   @override
-  void initState() {
-    super.initState();
-    fetchUserList();
-  }
-
-  void searchUser(String keyword) {
-    if (keyword.isEmpty) {
-      setState(() {
-        fetchUserList();
-      });
-    } else {
-      FirebaseFirestore.instance
-          .collection('users')
-          .where('role', isNotEqualTo: 'Admin')
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        List<UserModel> filteredUsers = querySnapshot.docs
-            .where((doc) => doc['name'].startsWith(keyword))
-            .map((doc) {
-          String name = doc['name'] as String;
-          String email = doc['email'] as String;
-          String address = doc['address'] as String;
-          String phone = doc['phone'] as String;
-          String birthday = doc['birthday'] as String;
-          String imageUrl = doc['imageUrl'] as String;
-          String role = doc['role'] as String;
-          String gender = doc['gender'] as String;
-          return UserModel(
-              nameUser: name,
-              birthday: birthday,
-              phoneNumber: phone,
-              imageUrl: imageUrl,
-              role: role,
-              email: email,
-              address: address,
-              gender: gender);
-        }).toList();
-        setState(() {
-          filteredUserList = filteredUsers;
-        });
-      });
-    }
-  }
-
-  void _deleteUser(UserModel userModel) {
-    FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: userModel.email)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        doc.reference.delete();
-      }
-    });
-  }
-
-  void _navigateToUserDetail(UserModel user) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => UserDetailPage(user: user),
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2, // Number of tabs
+      child: Scaffold(
+        backgroundColor: AppColorsExt.backgroundColor,
+        appBar: AppBar(
+          backgroundColor: AppColorsExt.backgroundColor,
+          actions: [
+            IconButton(onPressed: (){
+              Get.to(()=> const RegisterStaff());
+            }, icon: const Icon(Icons.add))
+          ],
+          title: AppTextBody1Widget()
+              .setText("User Management").build(context),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Users'),
+              Tab(text: 'Staff'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            _buildUserList(role: 'User'),
+            _buildUserList(role: 'Staff'),
+          ],
+        ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildUserList({required String role}) {
     return Container(
       padding: const EdgeInsets.all(8),
       color: AppColorsExt.backgroundColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  flex: 9,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: searchController,
-                      onChanged: (value) {
-                        searchUser(value);
-                      },
-                      style: const TextStyle(
-                        color: AppColorsExt.textColor,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: 'Search',
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: AppColorsExt.textColor,
-                        ),
-                        labelStyle: const TextStyle(
-                          color: AppColorsExt.textColor,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // ... Your search TextField and other UI elements ...
+
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredUserList.length,
-              itemBuilder: (context, index) {
-                UserModel user = filteredUserList[index];
-                return InkWell(
-                  onTap: () {
-                    _navigateToUserDetail(user);
-                  },
-                  child: Card(
-                    color: Colors.white60,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              color: Colors.grey.withOpacity(0.2),
-                              // Replace with your image widget
-                              child: Image.network(
-                                user.imageUrl!,
-                                fit: BoxFit.cover,
+            child: FutureBuilder<List<UserModel>>(
+              future: controller.getUsersByRole(role),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Text('No users found.');
+                } else {
+                  List<UserModel> userList = snapshot.data!;
+                  return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: userList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      UserModel user = userList[index];
+                      return InkWell(
+                        onTap: () {
+                          Get.to(() => UserDetailPage(user: user));
+                        },
+                        child: Card(
+                          elevation: 2,
+                          // Add some elevation for a card-like appearance
+                          child: ListTile(
+                            leading: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: user.imageUrl!.isNotEmpty
+                                    ? Image.network(
+                                        user.imageUrl!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.asset(
+                                        'assets/defaultImage/user_avatar.png',
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
+                            title: Text(user.nameUser!),
+                            subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  user.nameUser!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(user.email),
-                                Text(user.role),
+                                Text("Email: ${user.email}"),
+                                Text("Role: ${user.role}"),
                               ],
                             ),
+                            trailing: PopupMenuButton<String>(
+                              onSelected: (value) {
+                                if (value == 'delete') {
+                                  AppDefaultDialogWidget()
+                                      .setAppDialogType(AppDialogType.confirm)
+                                      .setNegativeText("No")
+                                      .setPositiveText("Yes")
+                                      .setTitle("CONFIRM DELETE USER")
+                                      .setContent(
+                                          "Are you sure to remove this user?")
+                                      .setOnPositive(() {
+                                        controller.deleteUser(user);
+                                      })
+                                      .buildDialog(context)
+                                      .show();
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  const PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: Text('Delete'),
+                                  ),
+                                ];
+                              },
+                            ),
                           ),
-                          // IconButton(
-                          //   onPressed: () {
-                          //     _deleteUser(user);
-                          //   },
-                          //   icon: const Icon(Icons.delete),
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                        ),
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
