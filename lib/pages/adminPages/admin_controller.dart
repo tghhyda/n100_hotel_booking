@@ -5,16 +5,18 @@ import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dar
 import 'package:n100_hotel_booking/components/snackBar/app_snack_bar_base_builder.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/admin_room_view_detail.dart';
+import 'package:n100_hotel_booking/pages/adminPages/roomManagement/room_list_controller.dart';
 
 class AdminController extends GetxController {
   List<TypeRoomModel>? typeRoomList;
   List<StatusRoomModel>? statusList;
+  final roomListController = Get.put(RoomListController());
+  RxList<RoomModel> filteredRoomList = <RoomModel>[].obs;
 
   Future<void> deleteRoomAndCheckBooking(String roomId) async {
     try {
       final firestore = FirebaseFirestore.instance;
       final roomRef = firestore.collection('rooms').doc(roomId);
-
 
       final bookingSnapshot = await firestore
           .collection('bookings')
@@ -35,7 +37,11 @@ class AdminController extends GetxController {
 
       // Room is not booked, delete the room
       await roomRef.delete();
-      await Get.off(() => AdminRoomDetailPage());
+      final updatedRoomList = roomListController.roomList
+          .where((room) => room.idRoom != roomId)
+          .toList();
+      roomListController.updateRoomList(updatedRoomList);
+      Get.back();
       AppSnackBarWidget()
           .setShowOnTop(SnackPosition.TOP)
           .setAppSnackBarType(AppSnackBarType.toastMessage)
@@ -72,6 +78,20 @@ class AdminController extends GetxController {
     return querySnapshot.size;
   }
 
+  void filterRooms(String query) {
+    filteredRoomList.clear();
+    if (query.isEmpty) {
+      filteredRoomList.addAll(roomListController.roomList);
+    } else {
+      final lowerCaseQuery = query.toLowerCase();
+      filteredRoomList.addAll(roomListController.roomList.where((room) {
+        return room.typeRoom.nameTypeRoom!
+            .toLowerCase()
+            .contains(lowerCaseQuery);
+      }));
+    }
+  }
+
   Future<List<RoomModel>> fetchRoomList() async {
     try {
       QuerySnapshot roomSnapshot =
@@ -81,6 +101,8 @@ class AdminController extends GetxController {
         RoomModel room = RoomModel.fromJson(doc.data() as Map<String, dynamic>);
         return room;
       }).toList();
+      roomListController.updateRoomList(rooms);
+      filteredRoomList.assignAll(rooms);
       return rooms;
     } catch (e) {
       print("Error fetching room list: $e");
@@ -170,6 +192,8 @@ class AdminController extends GetxController {
           .collection('rooms')
           .doc(roomModel.idRoom)
           .set(roomJson);
+
+      await fetchRoomList();
 
       print('Room data posted to Firebase successfully');
     } catch (error) {

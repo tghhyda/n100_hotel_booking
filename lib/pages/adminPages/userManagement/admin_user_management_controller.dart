@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dart';
@@ -60,6 +61,20 @@ class AdminUserManagementController extends GetxController {
     }
 
     try {
+
+      await FirebaseAuth.instance
+          .fetchSignInMethodsForEmail(user.email)
+          .then((providers) async {
+        if (providers.isNotEmpty) {
+          await FirebaseAuth.instance
+              .signInWithEmailAndPassword(
+              email: user.email, password: 'temporaryPassword')
+              .then((cred) async {
+            await FirebaseAuth.instance.currentUser?.delete();
+          });
+        }
+      });
+
       // Xóa người dùng trên Firebase
       await FirebaseFirestore.instance
           .collection('users')

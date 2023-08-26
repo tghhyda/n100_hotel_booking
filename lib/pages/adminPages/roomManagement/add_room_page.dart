@@ -14,6 +14,7 @@ import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/constants/app_colors_ext.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_controller.dart';
+import 'package:n100_hotel_booking/pages/adminPages/roomManagement/room_list_controller.dart';
 
 class AddRoomPage extends GetView<AdminController> {
   AddRoomPage({super.key});
@@ -22,6 +23,8 @@ class AddRoomPage extends GetView<AdminController> {
 
   @override
   final controller = Get.put(AdminController());
+
+  final roomListController = Get.put(RoomListController());
 
   Future<List<StatusRoomModel>> fetchStatusList() async {
     List<StatusRoomModel> statusList = await controller.fetchStatusList();
@@ -479,7 +482,7 @@ class AddRoomPage extends GetView<AdminController> {
                                   Colors.black), // Thay đổi border radius ở đây
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           try {
                             selectedTypeRoom?.value ??=
@@ -503,16 +506,20 @@ class AddRoomPage extends GetView<AdminController> {
                                 descriptionController.text);
                             _onUploadImages(idRoom);
                             controller.postRoomDataToFirebase(room);
+                            final updatedRoomList = roomListController.roomList + [room];
+                            roomListController.updateRoomList(updatedRoomList);
+                            Get.back();
+                            AppSnackBarWidget()
+                                .setAppSnackBarType(
+                                    AppSnackBarType.toastMessage)
+                                .setAppSnackBarStatus(AppSnackBarStatus.success)
+                                .setContent(AppTextBody1Widget()
+                                    .setText("Add room success")
+                                    .build(context))
+                                .showSnackBar(context);
                           } catch (e) {
                             rethrow;
                           }
-                          AppSnackBarWidget()
-                              .setAppSnackBarType(AppSnackBarType.toastMessage)
-                              .setAppSnackBarStatus(AppSnackBarStatus.success)
-                              .setContent(AppTextBody1Widget()
-                                  .setText("Add room success")
-                                  .build(context))
-                              .showSnackBar(context);
                         } else {
                           AppSnackBarWidget()
                               .setAppSnackBarType(AppSnackBarType.toastMessage)

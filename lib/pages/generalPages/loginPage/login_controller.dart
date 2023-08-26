@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
+import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dart';
 import 'package:n100_hotel_booking/components/selection/app_check_box_widget.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
@@ -157,11 +158,21 @@ class LoginController extends GetxController {
       return 'Success';
     } on FirebaseAuthException catch (e) {
       isInvalid = true;
-      if (e.code == 'user-not-found') {
-        return 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        return 'Wrong password provided for that user.';
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+        AppDefaultDialogWidget()
+            .setAppDialogType(AppDialogType.error)
+            .setIsHaveCloseIcon(true)
+            .setContent("This account is invalid")
+            .buildDialog(context)
+            .show();
+        return 'Account is invalid because $e';
       }
+      AppDefaultDialogWidget()
+          .setAppDialogType(AppDialogType.error)
+          .setIsHaveCloseIcon(true)
+          .setContent("Something went wrong")
+          .buildDialog(context)
+          .show();
       return 'An error occurred.';
     }
   }
