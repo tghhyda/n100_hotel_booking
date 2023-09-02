@@ -513,6 +513,7 @@ class EditRoomPage extends GetView<EditRoomController> {
                           controller.selectedConvenients!.toList(),
                           controller.roomModel.value!.review,
                           controller.roomModel.value!.images,
+                          controller.roomModel.value!.entityRoom,
                           controller.descriptionController.text,
                         );
 

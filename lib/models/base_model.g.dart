@@ -48,6 +48,11 @@ RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
               : ReviewModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       (json['images'] as List<dynamic>?)?.map((e) => e as String?).toList(),
+      (json['entityRoom'] as List<dynamic>?)
+          ?.map((e) => e == null
+              ? null
+              : EntityRoomModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       json['description'] as String,
     );
 
@@ -63,6 +68,7 @@ Map<String, dynamic> _$RoomModelToJson(RoomModel instance) => <String, dynamic>{
       'convenient': instance.convenient,
       'review': instance.review,
       'images': instance.images,
+      'entityRoom': instance.entityRoom,
       'description': instance.description,
     };
 
@@ -205,4 +211,21 @@ Map<String, dynamic> _$PromoCodeModelToJson(PromoCodeModel instance) =>
       'startDate': instance.startDate?.toIso8601String(),
       'endDate': instance.endDate?.toIso8601String(),
       'discount': instance.discount,
+    };
+
+EntityRoomModel _$EntityRoomModelFromJson(Map<String, dynamic> json) =>
+    EntityRoomModel(
+      json['id'] as String,
+      json['name'] as String,
+      json['currentBooking'] == null
+          ? null
+          : BookingModel.fromJson(
+              json['currentBooking'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$EntityRoomModelToJson(EntityRoomModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'currentBooking': instance.currentBooking,
     };

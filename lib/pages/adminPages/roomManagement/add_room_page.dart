@@ -503,6 +503,7 @@ class AddRoomPage extends GetView<AdminController> {
                                 selectedConvenients!,
                                 [],
                                 [],
+                                [],
                                 descriptionController.text);
                             _onUploadImages(idRoom);
                             controller.postRoomDataToFirebase(room);

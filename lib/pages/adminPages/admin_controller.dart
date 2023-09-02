@@ -41,6 +41,7 @@ class AdminController extends GetxController {
           .where((room) => room.idRoom != roomId)
           .toList();
       roomListController.updateRoomList(updatedRoomList);
+      await fetchRoomList();
       Get.back();
       AppSnackBarWidget()
           .setShowOnTop(SnackPosition.TOP)

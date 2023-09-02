@@ -28,6 +28,19 @@ class UserController extends GetxController {
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
 
+  String formatPrice(int price) {
+    String priceString = price.toString();
+    List<String> chunks = [];
+    for (int i = priceString.length - 1; i >= 0; i -= 3) {
+      int start = i - 2 >= 0 ? i - 2 : 0;
+      chunks.insert(0, priceString.substring(start, i + 1));
+    }
+
+    String formattedPrice = chunks.join('.');
+
+    return formattedPrice;
+  }
+
   Future<void> updateRoomQuantity(String roomId, int updatedQuantity) async {
     try {
       await FirebaseFirestore.instance
@@ -192,7 +205,7 @@ class UserController extends GetxController {
 
       // Use the results of capacity query to filter by quantity
       roomList = capacityQuery.docs
-          .where((doc) => doc['quantity'] >= numberOfRooms)
+          .where((doc) => (doc['entityRoom'] as List<dynamic>?)!.length >= numberOfRooms)
           .map((doc) => RoomModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
 

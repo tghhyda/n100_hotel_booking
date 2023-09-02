@@ -30,6 +30,16 @@ class RoomDetailDescriptionView extends StatelessWidget {
     return list;
   }
 
+  int countAvailableRoom() {
+    int count = 0;
+    roomModel.entityRoom?.forEach((element) {
+      if (element?.currentBooking == null) {
+        count++;
+      }
+    });
+    return count;
+  }
+
   ImageIcon _getConvenientIcon(String name) {
     switch (name) {
       case 'Air conditional':
@@ -83,6 +93,7 @@ class RoomDetailDescriptionView extends StatelessWidget {
                 header: AppTextBody1Widget()
                     .setText("ROOM DESCRIPTION")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 body: bodyDescription),
           ),
@@ -95,6 +106,7 @@ class RoomDetailDescriptionView extends StatelessWidget {
                 AppTextBody1Widget()
                     .setText("ROOM FACILITIES")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 const SizedBox(
                   height: 8,
@@ -118,6 +130,7 @@ class RoomDetailDescriptionView extends StatelessWidget {
                 AppTextBody1Widget()
                     .setText("CONTACT US")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 Row(
                   children: [
@@ -176,6 +189,7 @@ class RoomDetailDescriptionView extends StatelessWidget {
                 AppTextBody1Widget()
                     .setText("OTHER INFORMATION")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 StaggeredGrid.count(
                   crossAxisSpacing: 10,
@@ -205,13 +219,14 @@ class RoomDetailDescriptionView extends StatelessWidget {
                         "Quantity bed",
                         "${roomModel.beds} beds",
                         const ImageIcon(
-                            AssetImage('assets/roomAttributes/room_bed_icon.png'),
+                            AssetImage(
+                                'assets/roomAttributes/room_bed_icon.png'),
                             size: 45.0,
                             color: Colors.blue)),
                     _buildRoomAttribute(
                         context,
                         "Available room",
-                        "${roomModel.quantity} rooms",
+                        "${countAvailableRoom()} rooms",
                         const ImageIcon(
                             AssetImage(
                                 'assets/roomAttributes/room_quantity_icon.png'),

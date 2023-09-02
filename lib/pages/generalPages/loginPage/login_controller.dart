@@ -15,6 +15,7 @@ import 'package:n100_hotel_booking/pages/generalPages/components/divider_widget.
 import 'package:n100_hotel_booking/pages/generalPages/components/square_tile_widget.dart';
 import 'package:n100_hotel_booking/pages/generalPages/forgotPasswordPage/forgot_password_controller.dart';
 import 'package:n100_hotel_booking/pages/generalPages/registerPage/register_page.dart';
+import 'package:n100_hotel_booking/pages/staffPages/staff_home_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -124,13 +125,10 @@ class LoginController extends GetxController {
               builder: (context) => const AdminHome(),
             ),
           );
+        } else if (role == "Staff") {
+          Get.offAll(() => StaffHomePage());
         } else {
-          Navigator.pushReplacement(
-            Get.context ?? context,
-            MaterialPageRoute(
-              builder: (context) => UserHome(),
-            ),
-          );
+          Get.offAll(() => UserHome());
         }
       } else {
         print('Document does not exist in the database');

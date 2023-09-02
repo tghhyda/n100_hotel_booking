@@ -27,7 +27,13 @@ class UserHomePage extends GetView<UserController> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const ImageSliderWidget().build(context),
+          const ImageSliderWidget(
+            listImage: [
+              AssetImage('assets/adsImage/ad1.png'),
+              AssetImage('assets/adsImage/ad2.png'),
+              AssetImage('assets/adsImage/ad3.png'),
+            ],
+          ).build(context),
           Padding(
             padding: const EdgeInsets.all(8),
             child: Form(

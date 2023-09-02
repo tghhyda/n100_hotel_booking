@@ -14,7 +14,9 @@ class RoomModel {
   List<ConvenientModel?>? convenient;
   List<ReviewModel?>? review;
   List<String?>? images;
+  List<EntityRoomModel?>? entityRoom;
   String description;
+
 
   RoomModel(
       this.idRoom,
@@ -28,6 +30,7 @@ class RoomModel {
       this.convenient,
       this.review,
       this.images,
+      this.entityRoom,
       this.description);
 
   factory RoomModel.fromJson(Map<String, dynamic> json) =>

@@ -6,6 +6,7 @@ import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/admin_controller.dart';
+import 'package:n100_hotel_booking/pages/adminPages/roomManagement/add_entity_room_page/admin_room_add_entity_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/edit_room_page/edit_room_page.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/room_list_controller.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/views/admin_room_detail_description_view.dart';
@@ -46,6 +47,10 @@ class AdminRoomDetailPage extends GetView<AdminController> {
                         value: 'deleteRoom',
                         child: Text('Delete room'),
                       ),
+                      const PopupMenuItem<String>(
+                        value: 'addRoom',
+                        child: Text('Add entity room'),
+                      ),
                     ];
                   },
                   onSelected: (String result) {
@@ -65,6 +70,9 @@ class AdminRoomDetailPage extends GetView<AdminController> {
                           })
                           .buildDialog(context)
                           .show();
+                    }
+                    if (result == 'addRoom') {
+                      Get.to(() => AdminRoomAddEntityPage(), arguments: room);
                     }
                   },
                 ),

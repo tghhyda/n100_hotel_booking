@@ -5,6 +5,7 @@ import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/userPages/bookingPage/booking_page.dart';
+import 'package:n100_hotel_booking/pages/userPages/components/image_slider_widget.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 import 'package:n100_hotel_booking/pages/userPages/views/room_detail_description_view.dart';
 import 'package:n100_hotel_booking/pages/userPages/views/room_detail_review_view.dart';
@@ -37,14 +38,17 @@ class RoomDetailPage extends GetView<UserController> {
                   .build(context),
               flexibleSpace: FlexibleSpaceBar(
                 background: room.images!.isNotEmpty
-                    ? Image.network(
-                        room.images![0]!,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.asset(
-                        'assets/adsImage/room4.png',
-                        fit: BoxFit.cover,
-                      ),
+                    ? ImageSliderWidget(
+                            listImage: room.images!
+                                .map((e) => NetworkImage(e!))
+                                .toList())
+                        .build(context)
+                    : const ImageSliderWidget(listImage: [
+                        AssetImage('assets/adsImage/room1.png'),
+                        AssetImage('assets/adsImage/room2.png'),
+                        AssetImage('assets/adsImage/room3.png'),
+                        AssetImage('assets/adsImage/room4.png'),
+                      ]),
                 titlePadding: const EdgeInsets.only(left: 10, bottom: 10),
                 title: Row(
                   children: [
@@ -117,7 +121,9 @@ class RoomDetailPage extends GetView<UserController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppTextBody1Widget()
-                      .setText('${room.priceRoom} VND')
+                      .setText('${controller.formatPrice(room.priceRoom)} VND')
+                      .setColor(AppColors.of.redColor)
+                      .setTextStyle(AppTextStyleExt.of.textBody1s)
                       .build(context),
                   AppTextBody1Widget().setText('AVG/NIGHT').build(context),
                 ],
@@ -134,6 +140,7 @@ class RoomDetailPage extends GetView<UserController> {
                 ),
                 child: AppTextButtonWidget()
                     .setButtonText("BOOKING NOW")
+                    .setTextStyle(TextStyle(color: AppColors.of.redColor))
                     .setOnPressed(() {
                   Get.to(() => BookingPage(), arguments: room.idRoom);
                 }).build(context),

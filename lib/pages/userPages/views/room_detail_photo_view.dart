@@ -63,12 +63,14 @@ class RoomDetailPhotoView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.contain,
+        return SizedBox(
+          child: Dialog(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         );

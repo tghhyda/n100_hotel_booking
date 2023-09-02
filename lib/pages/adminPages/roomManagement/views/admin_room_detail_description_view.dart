@@ -7,6 +7,7 @@ import 'package:n100_hotel_booking/components/toolTip/app_tooltip_base_builder.d
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
 class AdminRoomDetailDescriptionView extends StatelessWidget {
   const AdminRoomDetailDescriptionView(
@@ -28,6 +29,16 @@ class AdminRoomDetailDescriptionView extends StatelessWidget {
       ));
     });
     return list;
+  }
+
+  int countAvailableRoom() {
+    int count = 0;
+    roomModel.entityRoom?.forEach((element) {
+      if (element?.currentBooking == null) {
+        count++;
+      }
+    });
+    return count;
   }
 
   ImageIcon _getConvenientIcon(String name) {
@@ -83,6 +94,7 @@ class AdminRoomDetailDescriptionView extends StatelessWidget {
                 header: AppTextBody1Widget()
                     .setText("ROOM DESCRIPTION")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 body: bodyDescription),
           ),
@@ -95,6 +107,7 @@ class AdminRoomDetailDescriptionView extends StatelessWidget {
                 AppTextBody1Widget()
                     .setText("ROOM FACILITIES")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 const SizedBox(
                   height: 8,
@@ -118,6 +131,7 @@ class AdminRoomDetailDescriptionView extends StatelessWidget {
                 AppTextBody1Widget()
                     .setText("CONTACT US")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 Row(
                   children: [
@@ -176,6 +190,7 @@ class AdminRoomDetailDescriptionView extends StatelessWidget {
                 AppTextBody1Widget()
                     .setText("OTHER INFORMATION")
                     .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
                     .build(context),
                 StaggeredGrid.count(
                   crossAxisSpacing: 10,
@@ -205,13 +220,14 @@ class AdminRoomDetailDescriptionView extends StatelessWidget {
                         "Quantity bed",
                         "${roomModel.beds} beds",
                         const ImageIcon(
-                            AssetImage('assets/roomAttributes/room_bed_icon.png'),
+                            AssetImage(
+                                'assets/roomAttributes/room_bed_icon.png'),
                             size: 45.0,
                             color: Colors.blue)),
                     _buildRoomAttribute(
                         context,
                         "Available room",
-                        "${roomModel.quantity} rooms",
+                        "${countAvailableRoom()} rooms",
                         const ImageIcon(
                             AssetImage(
                                 'assets/roomAttributes/room_quantity_icon.png'),
@@ -222,6 +238,57 @@ class AdminRoomDetailDescriptionView extends StatelessWidget {
               ],
             ),
           ),
+          const Divider(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppTextBody1Widget()
+                    .setText("LIST ENTITY ROOM")
+                    .setTextStyle(AppTextStyleExt.of.textBody1s)
+                    .setColor(AppColors.of.yellowColor[6])
+                    .build(context),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (var entityRoom in roomModel.entityRoom ?? [])
+                      _buildEntityRoomRow(entityRoom),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEntityRoomRow(EntityRoomModel entityRoom) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(width: 1, color: Colors.grey),
+      ),
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.only(top: 12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppTextBody1Widget()
+              .setText("Name: ${entityRoom.name}")
+              .build(Get.context!),
+          AppTextBody1Widget()
+              .setText(
+                  "Status: ${entityRoom.currentBooking?.user != null ? "Checked-in" : "Available"}")
+              .build(Get.context!),
+          entityRoom.currentBooking != null
+              ? AppTextBody1Widget()
+                  .setText("User: ${entityRoom.currentBooking?.user}")
+                  .build(Get.context!)
+              : const SizedBox()
         ],
       ),
     );

@@ -45,7 +45,7 @@ class PickNumberWidget extends StatelessWidget {
                     theNumberOfX.value = 0;
                   }
                 },
-                child: const Icon(Icons.exposure_minus_1)),
+                child: const Icon(Icons.remove)),
             Obx(() => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: AppTextBody1Widget()
@@ -66,7 +66,7 @@ class PickNumberWidget extends StatelessWidget {
                 onPressed: () {
                   theNumberOfX.value += 1;
                 },
-                child: const Icon(Icons.plus_one)),
+                child: const Icon(Icons.add)),
           ],
         )
       ],

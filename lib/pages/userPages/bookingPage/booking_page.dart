@@ -106,6 +106,7 @@ class BookingPage extends GetView<UserController> {
                               .setText("ROOM INFORMATION")
                               .setColor(AppColors.of.grayColor[9])
                               .setTextStyle(AppTextStyleExt.of.textBody1s)
+                              .setColor(AppColors.of.yellowColor[6])
                               .build(context),
                           Padding(
                             padding: const EdgeInsets.symmetric(
@@ -162,10 +163,11 @@ class BookingPage extends GetView<UserController> {
                                         .build(context),
                                     const Spacer(),
                                     AppTextSubTitle1Widget()
-                                        .setText("$taxes VND")
+                                        .setText(
+                                            "${controller.formatPrice(taxes.toInt())} VND")
                                         .setTextStyle(
                                             AppTextStyleExt.of.textSubTitle1s)
-                                        .setColor(AppColors.of.grayColor[10])
+                                        .setColor(AppColors.of.lightBlueColor)
                                         .build(context),
                                   ],
                                 ),
@@ -178,10 +180,11 @@ class BookingPage extends GetView<UserController> {
                                         .build(context),
                                     const Spacer(),
                                     AppTextSubTitle1Widget()
-                                        .setText("$totalPrice VND")
+                                        .setText(
+                                            "${controller.formatPrice(totalPrice.toInt())} VND")
                                         .setTextStyle(
                                             AppTextStyleExt.of.textSubTitle1s)
-                                        .setColor(AppColors.of.grayColor[10])
+                                        .setColor(AppColors.of.redColor)
                                         .build(context),
                                   ],
                                 ),
@@ -196,6 +199,7 @@ class BookingPage extends GetView<UserController> {
                               .setText("GUESS INFORMATION")
                               .setColor(AppColors.of.grayColor[9])
                               .setTextStyle(AppTextStyleExt.of.textBody1s)
+                              .setColor(AppColors.of.yellowColor[6])
                               .build(context),
                           Padding(
                             padding: const EdgeInsets.symmetric(
@@ -264,6 +268,7 @@ class BookingPage extends GetView<UserController> {
                               .setText("PROMO CODE")
                               .setColor(AppColors.of.grayColor[9])
                               .setTextStyle(AppTextStyleExt.of.textBody1s)
+                              .setColor(AppColors.of.yellowColor[6])
                               .build(context),
                           AppTextSubTitle1Widget()
                               .setText(
