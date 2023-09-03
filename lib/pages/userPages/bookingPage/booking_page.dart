@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +27,7 @@ class BookingPage extends GetView<UserController> {
   Widget build(BuildContext context) {
     UserModel? userModel = controller.currentUser;
     int stayNights = controller.selectedDates.value.duration.inDays;
+    String bookingId = generateRandomId();
 
     return Scaffold(
       body: FutureBuilder<RoomModel>(
@@ -306,6 +309,7 @@ class BookingPage extends GetView<UserController> {
           onPressed: () {
             if (stayNights > 0) {
               final BookingModel bookingModel = BookingModel(
+                  bookingId,
                   userModel?.email,
                   selectedRoom.idRoom,
                   controller.selectedDates.value.start,
@@ -348,5 +352,14 @@ class BookingPage extends GetView<UserController> {
         ),
       ),
     );
+  }
+
+  String generateRandomId() {
+    var random = Random();
+    var timeInMillis = DateTime.now().millisecondsSinceEpoch;
+    var randomData = List<int>.generate(8, (_) => random.nextInt(256));
+
+    var id = '$timeInMillis${randomData.join('')}';
+    return id;
   }
 }

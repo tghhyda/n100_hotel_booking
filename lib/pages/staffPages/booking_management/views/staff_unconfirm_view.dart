@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/staffPages/booking_management/booking_management_controller.dart';
+import 'package:n100_hotel_booking/pages/staffPages/booking_management/booking_management_detail_page.dart';
+import 'package:n100_hotel_booking/pages/staffPages/components/staff_booking_card_widget.dart';
 import 'package:n100_hotel_booking/pages/userPages/historyBooking/components/booking_card_widget.dart';
 
-class StaffUnConfirmView extends GetView<BookingManagementController>{
-   StaffUnConfirmView({super.key});
+class StaffUnConfirmView extends GetView<BookingManagementController> {
+  StaffUnConfirmView({super.key});
 
   @override
   final controller = Get.put(BookingManagementController());
@@ -36,9 +38,12 @@ class StaffUnConfirmView extends GetView<BookingManagementController>{
                   BookingModel booking = unconfirmedBookings[index];
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: BookingCardWidget(
+                    child: StaffBookingCardWidget(
                       bookingModel: booking,
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.to(() => BookingManagementDetailPage(),
+                            arguments: booking);
+                      },
                     ),
                   );
                 },
@@ -49,5 +54,4 @@ class StaffUnConfirmView extends GetView<BookingManagementController>{
       ),
     );
   }
-
 }

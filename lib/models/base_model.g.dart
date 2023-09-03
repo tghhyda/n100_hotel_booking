@@ -85,6 +85,7 @@ Map<String, dynamic> _$TypeRoomModelToJson(TypeRoomModel instance) =>
     };
 
 BookingModel _$BookingModelFromJson(Map<String, dynamic> json) => BookingModel(
+      json['bookingId'] as String?,
       json['user'] as String?,
       json['room'] as String?,
       json['startDate'] == null
@@ -115,6 +116,7 @@ BookingModel _$BookingModelFromJson(Map<String, dynamic> json) => BookingModel(
 
 Map<String, dynamic> _$BookingModelToJson(BookingModel instance) =>
     <String, dynamic>{
+      'bookingId': instance.bookingId,
       'user': instance.user,
       'room': instance.room,
       'startDate': instance.startDate?.toIso8601String(),

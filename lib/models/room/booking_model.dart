@@ -3,6 +3,7 @@ part of '../base_model.dart';
 @JsonSerializable()
 @CopyWith()
 class BookingModel {
+  final String? bookingId;
   final String? user;
   final String? room;
   final DateTime? startDate;
@@ -21,6 +22,7 @@ class BookingModel {
   bool? isPaid;
 
   BookingModel(
+      this.bookingId,
       this.user,
       this.room,
       this.startDate,

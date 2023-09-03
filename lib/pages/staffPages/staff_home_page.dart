@@ -21,8 +21,7 @@ class StaffHomePage extends GetView<StaffController> {
 
   final RxInt _currentPageIndex = 0.obs;
 
-  final List<Widget> _pages = [BookingManagementPage(), HistoryPage(), SettingPage()];
-
+  final List<Widget> _pages = [BookingManagementPage(), SettingPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +72,7 @@ class StaffHomePage extends GetView<StaffController> {
                       borderRadius: BorderRadius.circular(60),
                       child: profileController.avatarUrl.isNotEmpty == true
                           ? Image.network(
-                        profileController.avatarUrl.value,
+                              profileController.avatarUrl.value,
                               height: 35,
                               width: 35,
                             )
@@ -101,10 +100,6 @@ class StaffHomePage extends GetView<StaffController> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.history),
-                label: 'History',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.settings),
