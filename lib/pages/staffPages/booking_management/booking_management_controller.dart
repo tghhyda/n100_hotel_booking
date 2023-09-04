@@ -7,6 +7,54 @@ import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/staffPages/staff_home_page.dart';
 
 class BookingManagementController extends GetxController {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  Future<void> updateCurrentBookingForEntityRoom(
+      String roomId, String entityRoomId, BookingModel? newBooking) async {
+    try {
+      final DocumentReference roomRef =
+          firestore.collection('rooms').doc(roomId);
+
+      final DocumentSnapshot roomSnapshot = await roomRef.get();
+
+      if (roomSnapshot.exists) {
+        final Map<String, dynamic> roomData =
+            roomSnapshot.data() as Map<String, dynamic>;
+        final List<dynamic> entityRoomsData = roomData['entityRoom'];
+
+        if (entityRoomsData != null) {
+          final updatedEntityRooms = entityRoomsData.map((entityRoom) {
+            if (entityRoom['id'] == entityRoomId) {
+              final Map<String, dynamic> updatedEntityRoom = {
+                ...entityRoom,
+                'currentBooking': newBooking?.toJson(),
+              };
+              return updatedEntityRoom;
+            }
+            return entityRoom;
+          }).toList();
+
+          await roomRef.update({'entityRoom': updatedEntityRooms});
+        }
+      }
+    } catch (error) {
+      // Handle errors here
+      print('Error updating currentBooking: $error');
+    }
+  }
+
+  Future<void> updateCurrentBookingForMultipleEntityRooms(String roomId,
+      List<String> entityRoomIds, BookingModel? newBooking) async {
+    try {
+      for (var entityRoomId in entityRoomIds) {
+        await updateCurrentBookingForEntityRoom(
+            roomId, entityRoomId, newBooking);
+      }
+    } catch (error) {
+      print('Error updating currentBooking for multiple EntityRooms: $error');
+    }
+  }
+
   Future<void> updateBookingIsConfirm(String bookingId, bool isConfirm) async {
     try {
       final firestore = FirebaseFirestore.instance;

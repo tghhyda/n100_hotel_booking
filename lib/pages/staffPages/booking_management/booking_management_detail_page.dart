@@ -11,7 +11,6 @@ import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/roomManagement/admin_room_view_detail.dart';
 import 'package:n100_hotel_booking/pages/adminPages/userManagement/detail_user_page.dart';
 import 'package:n100_hotel_booking/pages/staffPages/booking_management/booking_management_controller.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BookingManagementDetailPage extends GetView<BookingManagementController> {
   BookingManagementDetailPage({super.key});
@@ -22,6 +21,7 @@ class BookingManagementDetailPage extends GetView<BookingManagementController> {
   BookingModel bookingModel = Get.arguments;
   RoomModel? roomModel;
   String typeRoom = 'Single room';
+  RxList<EntityRoomModel>? selectedEntityRoom = <EntityRoomModel>[].obs;
 
   @override
   Widget build(BuildContext context) {
@@ -356,22 +356,124 @@ class BookingManagementDetailPage extends GetView<BookingManagementController> {
                                         .show();
                                     break;
                                   case 'confirm':
-                                    print('confirm');
-                                    AppDefaultDialogWidget()
-                                        .setAppDialogType(AppDialogType.confirm)
-                                        .setTitle("Confirm change status")
-                                        .setContent(
-                                            "Are you sure to change status to confirm?")
-                                        .setPositiveText("Yes")
-                                        .setNegativeText("No")
-                                        .setOnPositive(() async {
-                                          await controller
-                                              .updateBookingIsCheckin(
-                                                  bookingModel.bookingId!,
-                                                  true);
-                                        })
-                                        .buildDialog(context)
-                                        .show();
+                                    if (roomModel != null) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                              title: const Text(
+                                                  'Choose Entity Room'),
+                                              content: Wrap(
+                                                spacing: 8,
+                                                children: listAvailableRoom(
+                                                        roomModel!)
+                                                    .map((entity) {
+                                                  return Obx(
+                                                    () => InputChip(
+                                                      label: Text(entity.name),
+                                                      selected:
+                                                          selectedEntityRoom!
+                                                              .contains(entity),
+                                                      selectedColor: AppColors
+                                                          .of.yellowColor[5],
+                                                      onSelected: (isSelected) {
+                                                        if (isSelected) {
+                                                          selectedEntityRoom
+                                                              ?.add(entity);
+                                                          print(
+                                                              '${selectedEntityRoom?.length}');
+                                                        } else {
+                                                          selectedEntityRoom
+                                                              ?.remove(entity);
+                                                          print(
+                                                              '${selectedEntityRoom?.length}');
+                                                        }
+                                                      },
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                              actions: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    Expanded(
+                                                      child:
+                                                          AppOutlinedButtonWidget()
+                                                              .setButtonText(
+                                                                  "Cancel")
+                                                              .setOnPressed(() {
+                                                        Get.back();
+                                                      }).build(context),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 12,
+                                                    ),
+                                                    Expanded(
+                                                      child:
+                                                          AppFilledButtonWidget()
+                                                              .setButtonText(
+                                                                  "OK")
+                                                              .setOnPressed(() {
+                                                        if (selectedEntityRoom
+                                                                ?.length !=
+                                                            bookingModel
+                                                                .numberOfRooms) {
+                                                          AppSnackBarWidget()
+                                                              .setAppSnackBarType(
+                                                                  AppSnackBarType
+                                                                      .toastMessage)
+                                                              .setAppSnackBarStatus(
+                                                                  AppSnackBarStatus
+                                                                      .error)
+                                                              .setContent(Text(
+                                                                  "Please choose exactly ${bookingModel.numberOfRooms} rooms"))
+                                                              .showSnackBar(
+                                                                  context);
+                                                        } else {
+                                                          AppDefaultDialogWidget()
+                                                              .setAppDialogType(
+                                                                  AppDialogType
+                                                                      .confirm)
+                                                              .setNegativeText(
+                                                                  "NO")
+                                                              .setPositiveText(
+                                                                  "YES")
+                                                              .setTitle(
+                                                                  "Confirm check-in")
+                                                              .setOnPositive(
+                                                                  () async {
+                                                                await controller.updateCurrentBookingForMultipleEntityRooms(
+                                                                    roomModel!
+                                                                        .idRoom,
+                                                                    selectedEntityRoom!
+                                                                        .map((entityRoom) =>
+                                                                            entityRoom.id)
+                                                                        .toList(),
+                                                                    bookingModel);
+                                                                await controller
+                                                                    .updateBookingIsCheckin(
+                                                                        bookingModel
+                                                                            .bookingId!,
+                                                                        true);
+                                                              })
+                                                              .setContent(
+                                                                  "Are you sure to choose these room for this booking?")
+                                                              .buildDialog(
+                                                                  context)
+                                                              .show();
+                                                        }
+                                                      }).build(context),
+                                                    )
+                                                  ],
+                                                )
+                                              ]);
+                                        },
+                                      );
+                                    }
+
                                     break;
                                   case 'check-in':
                                     print('check-in');
@@ -379,10 +481,15 @@ class BookingManagementDetailPage extends GetView<BookingManagementController> {
                                         .setAppDialogType(AppDialogType.confirm)
                                         .setTitle("Confirm change status")
                                         .setContent(
-                                            "Are you sure to change status to confirm?")
+                                            "Are you sure to change status to check-out?")
                                         .setPositiveText("Yes")
                                         .setNegativeText("No")
                                         .setOnPositive(() async {
+                                          await controller
+                                              .updateCurrentBookingForMultipleEntityRooms(
+                                                  roomModel!.idRoom,
+                                                  getEntityRoomIdByBooking(bookingModel),
+                                                  null);
                                           await controller.updateBookingIsPaid(
                                               bookingModel.bookingId!, true);
                                         })
@@ -445,6 +552,26 @@ class BookingManagementDetailPage extends GetView<BookingManagementController> {
         ),
       ),
     );
+  }
+
+  List<String> getEntityRoomIdByBooking(BookingModel bookingModel) {
+    List<String> listId = [];
+    roomModel?.entityRoom?.forEach((element) {
+      if (element?.currentBooking?.bookingId == bookingModel.bookingId) {
+        listId.add(element!.id);
+      }
+    });
+    return listId;
+  }
+
+  List<EntityRoomModel> listAvailableRoom(RoomModel roomModel) {
+    List<EntityRoomModel> listEntityRoom = [];
+    roomModel.entityRoom?.forEach((element) {
+      if (element?.currentBooking == null) {
+        listEntityRoom.add(element!);
+      }
+    });
+    return listEntityRoom;
   }
 
   String _getStatus() {
