@@ -219,8 +219,9 @@ class ProfilePage extends GetView<ProfileController> {
                                     controller.phoneController.text;
                                 controller.currentUser.value?.birthday =
                                     DateFormat('dd/MM/yyyy')
-                                        .format(
-                                            controller.selectedBirthDate.value!)
+                                        .format(controller
+                                                .selectedBirthDate.value ??
+                                            DateTime.now())
                                         .toString();
                                 controller.currentUser.value?.gender =
                                     controller.selectedGender.value;
