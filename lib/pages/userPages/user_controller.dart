@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:n100_hotel_booking/components/dialog/app_dialog_base_builder.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/generalPages/loginPage/login_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserController extends GetxController {
   final Rx<DateTimeRange> selectedDates =

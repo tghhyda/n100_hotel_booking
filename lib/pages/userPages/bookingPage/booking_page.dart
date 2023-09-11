@@ -1,16 +1,13 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/components/textFormField/app_text_form_field_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
-import 'package:n100_hotel_booking/pages/userPages/historyBooking/history_page.dart';
+import 'package:n100_hotel_booking/pages/userPages/bookingPage/booking_success_page.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_controller.dart';
 import 'package:n100_hotel_booking/pages/userPages/user_home.dart';
-
 import '../../../components/snackBar/app_snack_bar_base_builder.dart';
 
 class BookingPage extends GetView<UserController> {
@@ -330,7 +327,7 @@ class BookingPage extends GetView<UserController> {
                   false,
                   DateTime.now());
               controller.addBookingToFirestore(bookingModel);
-              Get.offAll(UserHome());
+              Get.to(BookingSuccessPage());
               AppSnackBarWidget()
                   .setAppSnackBarType(AppSnackBarType.toastMessage)
                   .setAppSnackBarStatus(AppSnackBarStatus.success)

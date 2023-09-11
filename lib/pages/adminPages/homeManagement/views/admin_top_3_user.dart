@@ -4,6 +4,7 @@ import 'package:n100_hotel_booking/components/text/app_text_base_builder.dart';
 import 'package:n100_hotel_booking/config/app_theme.dart';
 import 'package:n100_hotel_booking/models/base_model.dart';
 import 'package:n100_hotel_booking/pages/adminPages/homeManagement/admin_home_controller.dart';
+import 'package:n100_hotel_booking/pages/adminPages/userManagement/detail_user_page.dart';
 
 class AdminTop3User extends GetView<AdminHomeController> {
   AdminTop3User({super.key});
@@ -56,7 +57,7 @@ class AdminTop3User extends GetView<AdminHomeController> {
                           child: Uri.tryParse(imageUrl) != null
                               ? InkWell(
                                   onTap: () {
-                                    // Xử lý khi nhấn vào hình ảnh
+                                    Get.to(() => UserDetailPage(user: user));
                                   },
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
@@ -70,12 +71,12 @@ class AdminTop3User extends GetView<AdminHomeController> {
                                 )
                               : InkWell(
                                   onTap: () {
-                                    // Xử lý khi nhấn vào hình ảnh
+                                    Get.to(() => UserDetailPage(user: user));
                                   },
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: Image.asset(
-                                      imageUrl,
+                                      'assets/defaultImage/user_avatar.png',
                                       fit: BoxFit.cover,
                                       height: 100,
                                       width: 100,
